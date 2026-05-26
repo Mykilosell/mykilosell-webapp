@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyKiloSell - Travel Form</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-hint-color: #999999;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--tg-theme-button-color);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fafafa;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color);
+            background-color: #ffffff;
+        }
+
+        /* City Search Suggestion Box */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>✈️ Post Your Travel</h2>
+    
+    <form id="travelForm">
+        <div class="form-group">
+            <label for="fromCity">Leaving FROM (မြို့မှ) *</label>
+            <input type="text" id="fromCity" placeholder="Type city name... e.g. Yangon" autocomplete="off" required>
+            <div id="fromSuggestions" class="suggestions" style="display: none;"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="toCity">Going TO (မြို့သို့) *</label>
+            <input type="text" id="toCity" placeholder="Type city name... e.g. Bangkok" autocomplete="off" required>
+            <div id="toSuggestions" class="suggestions" style="display: none;"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="travelDate">Travel Date (ခရီးသွားမည့်ရက်) *</label>
+            <input type="text" id="travelDate" placeholder="Select Date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="kilos">Available Kilos (ရနိုင်မည့် ကီလိုဂရမ်) *</label>
+            <select id="kilos" required>
+                <option value="" disabled selected>Choose Kilos</option>
+                <option value="5 Kg">5 Kg</option>
+                <option value="10 Kg">10 Kg</option>
+                <option value="15 Kg">15 Kg</option>
+                <option value="20 Kg">20 Kg</option>
+                <option value="25 Kg">25 Kg</option>
+                <option value="30 Kg">30 Kg</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price Per Kilo (တစ်ကီလိုဈေးနှုန်း THB) *</label>
+            <select id="price" required>
+                <option value="" disabled selected>Choose Price</option>
+                <option value="20 THB">20 THB</option>
+                <option value="30 THB">30 THB</option>
+                <option value="35 THB">35 THB</option>
+                <option value="40 THB">40 THB</option>
+                <option value="50 THB">50 THB</option>
+                <option value="60 THB">60 THB</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="extraContact">Other Contact Methods (အခြားဆက်သွယ်ရန် - Optional)</label>
+            <input type="text" id="extraContact" placeholder="Phone, WhatsApp, Viber etc.">
+            <div class="hint">Telegram is automatically linked. Add others if you want.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description & Rules (စည်းကမ်းချက်များ - Optional)</label>
+            <textarea id="description" rows="3" placeholder="e.g. No liquids, Meet at airport only..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">✨ Confirm and Post</button>
+    </form>
+</div>
+
+<script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // App ကို မျက်နှာပြင်အပြည့် ချဲ့လိုက်ခြင်း
+
+    // ကမ္ဘာ့မြို့ကြီးများ ဒေတာဘေ့စ်အသေးစား (နိုင်ငံတကာ မြို့စုံထည့်ထားသည်)
+    const citiesList = [
+        "Yangon, Myanmar", "Mandalay, Myanmar", "Naypyitaw, Myanmar", "Taunggyi, Myanmar",
+        "Bangkok, Thailand", "Chiang Mai, Thailand", "Phuket, Thailand", "Pattaya, Thailand",
+        "Kuala Lumpur, Malaysia", "Penang, Malaysia", "Singapore",
+        "Seoul, South Korea", "Busan, South Korea", "Tokyo, Japan", "Osaka, Japan",
+        "Dubai, UAE", "London, UK", "New York, USA", "Los Angeles, USA", "Sydney, Australia"
+    ];
+
+    // Beautiful Calendar Initializer
+    flatpickr("#travelDate", {
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        disableMobile: "true"
+    });
+
+    // Auto-Suggestion Search Logic Setup
+    function setupAutocomplete(inputId, suggestionId) {
+        const input = document.getElementById(inputId);
+        const suggestionBox = document.getElementById(suggestionId);
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            suggestionBox.innerHTML = '';
+            if (!val) { suggestionBox.style.display = 'none'; return; }
+
+            const filtered = citiesList.filter(c => c.toLowerCase().includes(val));
+            if (filtered.length === 0) { suggestionBox.style.display = 'none'; return; }
+
+            filtered.forEach(city => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.innerText = city;
+                div.addEventListener('click', function() {
+                    input.value = city;
+                    suggestionBox.style.display = 'none';
+                });
+                suggestionBox.appendChild(div);
+            });
+            suggestionBox.style.display = 'block';
+        });
+
+        // Click outside to close suggestion box
+        document.addEventListener('click', function(e) {
+            if (e.target !== input) { suggestionBox.style.display = 'none'; }
+        });
+    }
+
+    setupAutocomplete('fromCity', 'fromSuggestions');
+    setupAutocomplete('toCity', 'toSuggestions');
+
+    // Form Submit စနစ် (တယ်လီဂရမ်ဘော့တ်သို့ ဒေတာများကို JSON ဖြင့် လှမ်းပို့ခြင်း)
+    document.getElementById('travelForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = {
+            from_city: document.getElementById('fromCity').value,
+            to_city: document.getElementById('toCity').value,
+            travel_date: document.getElementById('travelDate').value,
+            kilos: document.getElementById('kilos').value,
+            price: document.getElementById('price').value,
+            contact: document.getElementById('extraContact').value || "Telegram Only",
+            description: document.getElementById('description').value || "No details provided"
+        };
+
+        // ဒေတာများကို Telegram Bot ဆီသို့ အော်တို ပို့လိုက်ပြီး WebApp ကို ပိတ်လိုက်ခြင်း
+        tg.sendData(JSON.stringify(formData));
+        tg.close();
+    });
+</script>
+
+</body>
+</html>
