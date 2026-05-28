@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MyKiloSell WebApp</title>
-    <!-- Telegram WebApp JS -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* CSS Styling */
         :root {
             --bg-color: #1c242c;
             --text-color: #ffffff;
@@ -16,6 +14,7 @@
             --disabled-btn: #555555;
             --card-bg: #2a3542;
             --danger-btn: #e53935;
+            --success-btn: #4caf50;
         }
 
         body {
@@ -23,285 +22,298 @@
             color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            padding: 15px;
         }
 
         .screen {
-            display: none; /* Hidden by default */
+            display: none;
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
+            margin: 0 auto;
             animation: fadeIn 0.3s ease-in-out;
+            padding-bottom: 50px;
         }
 
-        .active-screen {
-            display: block;
-        }
+        .active-screen { display: block; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1, h2, h3 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        h2, h3 { text-align: center; color: #fff; margin-bottom: 20px; }
 
         .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 10px;
-            background-color: var(--primary-btn);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            display: block; width: 100%; padding: 14px; margin-bottom: 12px;
+            border: none; border-radius: 8px; background-color: var(--primary-btn);
+            color: white; font-size: 16px; font-weight: bold; cursor: pointer;
         }
-
-        .btn:hover { background-color: var(--primary-btn-hover); }
-        .btn:disabled { background-color: var(--disabled-btn); cursor: not-allowed; }
+        .btn:disabled { background-color: var(--disabled-btn); }
         .btn-danger { background-color: var(--danger-btn); }
+        .btn-success { background-color: var(--success-btn); }
         .btn-outline { background-color: transparent; border: 2px solid var(--primary-btn); color: var(--primary-btn); }
 
-        /* Disclaimer Box */
-        .disclaimer-box {
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            max-height: 200px;
-            overflow-y: auto;
+        /* Forms */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #ccc; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444;
+            background-color: #151b22; color: white; box-sizing: border-box; font-size: 16px;
         }
 
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+        /* Post Cards */
+        .post-card { background-color: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .post-header { display: flex; justify-content: space-between; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 10px; }
+        .post-actions { display: flex; gap: 10px; margin-top: 15px; }
 
-        .checkbox-container input {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Marketplace Post Card */
-        .post-card {
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        /* Modal for Ads/Disclaimer */
+        /* Modals */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; z-index: 1000;
         }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-        }
+        .modal-content { background-color: var(--card-bg); padding: 20px; border-radius: 10px; width: 100%; max-width: 350px; }
+        
+        .kilo-edit-group { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; background: #151b22; padding: 10px; border-radius: 8px; }
+        .kilo-btn { background: var(--primary-btn); color: white; border: none; padding: 10px 15px; border-radius: 5px; font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Screen 1: Language Selection -->
-    <div id="screen-1" class="screen active-screen">
-        <h1 id="t-welcome">Welcome to MyKiloSell</h1>
-        <p style="text-align: center; margin-bottom: 30px;" id="t-choose-lang">Please choose your language</p>
-        <button class="btn" onclick="selectLanguage('en')">🇬🇧 English</button>
-        <button class="btn" onclick="selectLanguage('mm')">🇲🇲 မြန်မာဘာသာ</button>
+    <div id="screen-lang" class="screen active-screen">
+        <h2>Welcome to MyKiloSell</h2>
+        <p style="text-align: center;">Please choose your language</p>
+        <button class="btn" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="btn" onclick="setLang('mm')">🇲🇲 မြန်မာဘာသာ</button>
     </div>
 
-    <!-- Screen 2: Sign Up -->
-    <div id="screen-2" class="screen">
+    <div id="screen-signup" class="screen">
         <h2 id="t-signup-title">Sign Up</h2>
-        <p style="text-align: center; margin-bottom: 30px;" id="t-signup-desc">Create your account to continue</p>
-        <button class="btn" onclick="simulateSignUp()">📱 Sign Up with Phone Number</button>
+        <button class="btn btn-success" onclick="nav('screen-terms')">📱 <span id="t-signup-btn">Sign Up with Phone Number</span></button>
     </div>
 
-    <!-- Screen 3: General Disclaimer -->
-    <div id="screen-3" class="screen">
+    <div id="screen-terms" class="screen">
         <h2 id="t-terms-title">Terms of Service</h2>
-        <div class="disclaimer-box" id="t-terms-text">
-            1. MyKiloSell is only a platform to connect travelers and buyers. We do not take responsibility for any lost, damaged, or illegal items.<br><br>
-            2. Travelers are strictly responsible for checking the legality of the items.<br><br>
-            3. Any financial transactions are solely between the traveler and the buyer.
+        <div style="background:var(--card-bg); padding:15px; border-radius:8px; margin-bottom:20px; font-size:14px; line-height:1.6;" id="t-terms-text">
+            1. MyKiloSell is only a platform to connect...
         </div>
-        <label class="checkbox-container">
-            <input type="checkbox" id="agree-checkbox" onchange="toggleNextButton()">
-            <span id="t-agree-text">I have read and agree to these terms</span>
+        <label style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+            <input type="checkbox" id="chk-agree" style="width:20px; height:20px;" onchange="document.getElementById('btn-next').disabled = !this.checked">
+            <span id="t-agree-text">I agree to these terms</span>
         </label>
-        <button class="btn" id="btn-next" disabled onclick="showScreen('screen-4')">Next</button>
+        <button class="btn" id="btn-next" disabled onclick="nav('screen-hub')">Next</button>
     </div>
 
-    <!-- Screen 4: Main Action Hub -->
-    <div id="screen-4" class="screen">
+    <div id="screen-hub" class="screen">
         <h2 id="t-hub-title">What would you like to do?</h2>
-        <button class="btn" onclick="alert('Sell Form will open here')">🎒 Sell Kilos (I am a Traveler)</button>
-        <button class="btn" onclick="alert('Buy Form will open here')">📦 Buy Kilos (I need Cargo)</button>
-        <button class="btn btn-outline" onclick="showScreen('screen-5')">🌐 See Marketplace</button>
+        <button class="btn" onclick="nav('screen-sell')">🎒 <span id="t-btn-sell">Sell Kilos (I am a Traveler)</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-buy')" style="background-color: #151b22;">📦 <span id="t-btn-buy">Buy Kilos (I need Cargo)</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-market')">🌐 <span id="t-btn-market">See Marketplace</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-myposts')" style="margin-top: 30px; border-color: #aaa; color: #ccc;">📋 <span id="t-btn-manage">Manage My Posts</span></button>
     </div>
 
-    <!-- Screen 5: Marketplace -->
-    <div id="screen-5" class="screen">
+    <div id="screen-sell" class="screen">
+        <h2 id="t-sell-title">Post Your Travel</h2>
+        <div class="form-group">
+            <label id="t-lbl-from">Leaving FROM</label>
+            <select id="s-from"><option>Bangkok</option><option>Yangon</option><option>Singapore</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-to">Going TO</label>
+            <select id="s-to"><option>Yangon</option><option>Bangkok</option><option>Singapore</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-date">Date</label>
+            <input type="date" id="s-date">
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-kilos">Available Kilos</label>
+            <select id="s-kilos"><option value="5">5 Kg</option><option value="10">10 Kg</option><option value="20">20 Kg</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-price">Price Per Kilo (THB)</label>
+            <select id="s-price"><option value="30">30 THB</option><option value="40">40 THB</option><option value="50">50 THB</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-rules">Rules / Notes</label>
+            <textarea id="s-rules" rows="2" placeholder="e.g. No liquids"></textarea>
+        </div>
+        <button class="btn btn-success" onclick="submitPost('sell')">✅ <span id="t-btn-submit-sell">Post Travel</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
+    </div>
+
+    <div id="screen-buy" class="screen">
+        <h2 id="t-buy-title">Post Your Cargo Need</h2>
+        <div class="form-group">
+            <label id="t-lbl-buy-from">Send FROM</label>
+            <select><option>Bangkok</option><option>Yangon</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-buy-to">Send TO</label>
+            <select><option>Yangon</option><option>Bangkok</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-buy-kilos">Required Kilos</label>
+            <select><option>2 Kg</option><option>5 Kg</option><option>10 Kg</option></select>
+        </div>
+        <div class="form-group">
+            <label id="t-lbl-buy-item">Item Type</label>
+            <input type="text" placeholder="e.g. Clothes, Documents">
+        </div>
+        <button class="btn btn-success" onclick="submitPost('buy')">✅ <span id="t-btn-submit-buy">Post Request</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
+    </div>
+
+    <div id="screen-market" class="screen">
         <h2 id="t-market-title">Marketplace</h2>
         
-        <!-- Sample Post 1 -->
         <div class="post-card">
             <div class="post-header">
-                <strong>✈️ BKK ➡️ RGN</strong>
-                <span>25 May 2026</span>
+                <strong>✈️ BKK ➡️ YGN</strong>
+                <span style="color:#aaa;">30 May 2026</span>
             </div>
-            <p><strong>Available:</strong> 15 Kg</p>
-            <p><strong>Price:</strong> 40 THB / Kg</p>
+            <p style="margin:5px 0; color:#4caf50;"><strong>Seller Offer</strong></p>
+            <p style="margin:5px 0;">Available: <strong>10 Kg</strong></p>
+            <p style="margin:5px 0;">Price: <strong>40 THB / Kg</strong></p>
             <div class="post-actions">
-                <button class="btn" style="flex: 2; margin-bottom: 0;" onclick="openContactModal()">📱 Request Contact</button>
-                <button class="btn btn-danger" style="flex: 1; margin-bottom: 0;" onclick="alert('Report submitted!')">⚠️ Report</button>
+                <button class="btn" style="flex:2; margin:0;" onclick="document.getElementById('modal-contact').style.display='flex'">📱 Contact</button>
+                <button class="btn btn-danger" style="flex:1; margin:0;" onclick="alert('Reported!')">⚠️</button>
             </div>
         </div>
 
-        <button class="btn btn-outline" onclick="showScreen('screen-4')">⬅️ Back to Home</button>
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
     </div>
 
-    <!-- Ad & Specific Disclaimer Modal -->
-    <div id="contact-modal" class="modal-overlay">
+    <div id="screen-myposts" class="screen">
+        <h2 id="t-manage-title">My Active Posts</h2>
+        
+        <div class="post-card" style="border: 1px solid var(--primary-btn);">
+            <div class="post-header">
+                <strong>✈️ BKK ➡️ YGN (Yours)</strong>
+                <span style="color:#aaa;">30 May 2026</span>
+            </div>
+            <p style="margin:5px 0;">Available: <strong id="display-kilos">10</strong> Kg</p>
+            <p style="margin:5px 0;">Price: <strong id="display-price">40</strong> THB</p>
+            <div class="post-actions">
+                <button class="btn" style="flex:1; margin:0;" onclick="openEditModal()">✏️ Edit</button>
+                <button class="btn btn-danger" style="flex:1; margin:0;" onclick="alert('Post Deleted!')">🗑️ Delete</button>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
+    </div>
+
+    <div id="modal-contact" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="t-modal-title">Contact Request</h3>
-            <div class="disclaimer-box" style="text-align: left; max-height: 150px;">
-                <strong style="color: yellow;">[ Advertisement ]</strong><br>
-                Looking for cheap flights? Book with XYZ Travels today!<br><br>
-                <hr style="border-color: #444;">
-                <span id="t-modal-desc">By requesting contact, a notification will be sent to the user. Your basic profile will be shared if they allow it.</span>
+            <h3 id="t-mod-contact-title">Contact Request</h3>
+            <div style="background:#151b22; padding:10px; margin-bottom:15px; border:1px dashed #aaa;">
+                <strong style="color: yellow;">[ Ad ]</strong> Need a Visa? Call XYZ Agency!
             </div>
-            <button class="btn" id="btn-request" onclick="sendContactRequest()">✅ Agree & Send Request</button>
-            <button class="btn btn-outline" onclick="closeContactModal()">❌ Cancel</button>
+            <p id="t-mod-contact-desc" style="font-size:14px; margin-bottom:20px;">By continuing, your request will be sent to the seller.</p>
+            <button class="btn btn-success" onclick="sendContact()">✅ Send Request</button>
+            <button class="btn btn-outline" onclick="this.parentElement.parentElement.style.display='none'">❌ Cancel</button>
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
+    <div id="modal-edit" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="t-mod-edit-title">Update Kilos & Price</h3>
+            
+            <label>Available Kilos</label>
+            <div class="kilo-edit-group">
+                <button class="kilo-btn" onclick="updateKilo(-1)">-</button>
+                <span id="edit-kilo-val" style="font-size: 24px; font-weight: bold;">10</span>
+                <button class="kilo-btn" onclick="updateKilo(1)">+</button>
+            </div>
+
+            <label style="margin-top:15px;">Price (THB)</label>
+            <select id="edit-price-val" style="margin-bottom: 20px;">
+                <option value="30">30 THB</option>
+                <option value="40" selected>40 THB</option>
+                <option value="50">50 THB</option>
+            </select>
+
+            <button class="btn btn-success" onclick="saveEdit()">💾 Save Changes</button>
+            <button class="btn btn-danger" onclick="alert('Marked as Sold Out!'); this.parentElement.parentElement.style.display='none'">🚫 Mark Sold Out</button>
+            <button class="btn btn-outline" onclick="this.parentElement.parentElement.style.display='none'">❌ Cancel</button>
+        </div>
+    </div>
+
     <script>
-        // Initialize Telegram WebApp
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Expands to full height
+        tg.expand();
+        let currentKilos = 10; // For edit mock
 
-        let currentLang = 'en';
-
-        // Dictionary for basic translations
         const dict = {
             'en': {
-                't-signup-title': 'Sign Up',
-                't-signup-desc': 'Create your account to continue',
-                't-terms-title': 'Terms of Service',
-                't-terms-text': '1. MyKiloSell is only a platform to connect travelers and buyers. We do not take responsibility for any lost, damaged, or illegal items.<br><br>2. Travelers are strictly responsible for checking the legality of the items.<br><br>3. Any financial transactions are solely between the traveler and the buyer.',
-                't-agree-text': 'I have read and agree to these terms',
-                'btn-next': 'Next',
+                't-signup-title': 'Sign Up', 't-signup-btn': 'Sign Up with Phone Number',
+                't-terms-title': 'Terms', 't-agree-text': 'I agree to the rules.',
                 't-hub-title': 'What would you like to do?',
-                't-market-title': 'Marketplace',
-                't-modal-title': 'Contact Request',
-                't-modal-desc': 'By requesting contact, a notification will be sent to the user. Your basic profile will be shared if they allow it.'
+                't-btn-sell': 'Sell Kilos (Traveler)', 't-btn-buy': 'Buy Kilos (Cargo)',
+                't-btn-market': 'See Marketplace', 't-btn-manage': 'Manage My Posts',
+                't-sell-title': 'Post Travel', 't-buy-title': 'Post Cargo Need',
+                't-market-title': 'Marketplace', 't-manage-title': 'My Active Posts',
+                't-btn-submit-sell': 'Post Travel', 't-btn-submit-buy': 'Post Request',
+                't-mod-contact-title': 'Contact Request', 't-mod-edit-title': 'Update Kilos & Price'
             },
             'mm': {
-                't-signup-title': 'အကောင့်ဖွင့်ရန်',
-                't-signup-desc': 'ရှေ့ဆက်ရန် သင့်အကောင့်ကို ဖွင့်ပါ',
-                't-terms-title': 'စည်းကမ်းချက်များ',
-                't-terms-text': '၁။ MyKiloSell သည် ခရီးသွားများနှင့် ကီလိုဝယ်ယူလိုသူများကို အပြန်အလှန် ချိတ်ဆက်ပေးသော ပလက်ဖောင်းတစ်ခုသာ ဖြစ်သည်။ ပျောက်ဆုံးခြင်း၊ ပျက်စီးခြင်းများအတွက် တာဝန်ယူမည်မဟုတ်ပါ။<br><br>၂။ ခရီးသွားများသည် မိမိတို့သယ်မည့်ပစ္စည်း၏ တရားဝင်မှုကို စစ်ဆေးရန် တာဝန်ရှိသည်။<br><br>၃။ ငွေကြေးကိစ္စများသည် အချင်းချင်း တိုက်ရိုက်သဘောတူညီမှုသာ ဖြစ်သည်။',
-                't-agree-text': 'စည်းကမ်းချက်များကို ဖတ်ရှုပြီး သဘောတူပါသည်',
-                'btn-next': 'ရှေ့သို့',
+                't-signup-title': 'အကောင့်ဖွင့်ရန်', 't-signup-btn': 'ဖုန်းနံပါတ်ဖြင့် အကောင့်ဖွင့်မည်',
+                't-terms-title': 'စည်းကမ်းချက်များ', 't-agree-text': 'စည်းကမ်းချက်များကို သဘောတူပါသည်',
                 't-hub-title': 'မည်သည့်လုပ်ဆောင်ချက်ကို ပြုလုပ်လိုပါသနည်း?',
-                't-market-title': 'ပင်မဈေးကွက်',
-                't-modal-title': 'ဆက်သွယ်ခွင့် တောင်းခံခြင်း',
-                't-modal-desc': 'ဆက်သွယ်ခွင့်တောင်းပါက တစ်ဖက်လူထံ အသိပေးချက် ရောက်မည်ဖြစ်ပြီး ၎င်းမှခွင့်ပြုပါက သင့်အချက်အလက်ကို မြင်တွေ့ရမည် ဖြစ်သည်။'
+                't-btn-sell': 'ကီလိုရောင်းမည် (ခရီးသွား)', 't-btn-buy': 'ကီလိုဝယ်မည် (ပစ္စည်းပို့ရန်)',
+                't-btn-market': 'ဈေးကွက်သို့ ဝင်မည်', 't-btn-manage': 'မိမိ၏ ခရီးစဉ်များ ပြင်ဆင်ရန်',
+                't-sell-title': 'ခရီးစဉ်အသစ်တင်ရန်', 't-buy-title': 'ပစ္စည်းပို့ရန် တောင်းဆိုမည်',
+                't-market-title': 'ပင်မဈေးကွက်', 't-manage-title': 'ငါ၏ ခရီးစဉ်များ',
+                't-btn-submit-sell': 'အတည်ပြုပြီး တင်မည်', 't-btn-submit-buy': 'တောင်းဆိုချက် တင်မည်',
+                't-mod-contact-title': 'ဆက်သွယ်ခွင့် တောင်းခံခြင်း', 't-mod-edit-title': 'ကီလိုနှင့် ဈေးနှုန်း ပြင်ဆင်ရန်'
             }
         };
 
-        // Screen Navigation
-        function showScreen(screenId) {
+        function nav(screenId) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
+            window.scrollTo(0, 0);
         }
 
-        // Language Selection Logic
-        function selectLanguage(lang) {
-            currentLang = lang;
-            
-            // Apply Translations
+        function setLang(lang) {
             for (let id in dict[lang]) {
-                let element = document.getElementById(id);
-                if (element) {
-                    if (element.tagName === 'BUTTON') {
-                        element.innerText = dict[lang][id];
-                    } else {
-                        element.innerHTML = dict[lang][id];
-                    }
-                }
+                let el = document.getElementById(id);
+                if (el) el.innerText = dict[lang][id];
             }
-            showScreen('screen-2');
+            nav('screen-signup');
         }
 
-        // Simulate Phone Sign Up
-        function simulateSignUp() {
-            // Note: Actual Telegram Phone Request is done via Bot Keyboard, 
-            // here we simulate successful sign up logic to proceed in WebApp.
-            tg.HapticFeedback.impactOccurred('light');
-            showScreen('screen-3');
-        }
-
-        // Checkbox Logic
-        function toggleNextButton() {
-            const checkbox = document.getElementById('agree-checkbox');
-            const btnNext = document.getElementById('btn-next');
-            btnNext.disabled = !checkbox.checked;
-        }
-
-        // Modal Logic
-        function openContactModal() {
-            document.getElementById('contact-modal').style.display = 'flex';
-        }
-
-        function closeContactModal() {
-            document.getElementById('contact-modal').style.display = 'none';
-        }
-
-        function sendContactRequest() {
+        function submitPost(type) {
             tg.HapticFeedback.notificationOccurred('success');
-            alert('Contact Request sent to the user via Telegram Bot!');
-            closeContactModal();
+            alert(type === 'sell' ? 'Travel Posted!' : 'Cargo Request Posted!');
+            nav('screen-hub');
+        }
+
+        function sendContact() {
+            tg.HapticFeedback.notificationOccurred('success');
+            alert('Request sent! Waiting for seller to allow.');
+            document.getElementById('modal-contact').style.display = 'none';
+        }
+
+        // Edit Logic
+        function openEditModal() {
+            document.getElementById('edit-kilo-val').innerText = currentKilos;
+            document.getElementById('modal-edit').style.display = 'flex';
+        }
+
+        function updateKilo(val) {
+            if (currentKilos + val >= 0) {
+                currentKilos += val;
+                document.getElementById('edit-kilo-val').innerText = currentKilos;
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function saveEdit() {
+            let newPrice = document.getElementById('edit-price-val').value;
+            document.getElementById('display-kilos').innerText = currentKilos;
+            document.getElementById('display-price').innerText = newPrice;
+            document.getElementById('modal-edit').style.display = 'none';
+            tg.HapticFeedback.notificationOccurred('success');
         }
     </script>
 </body>
