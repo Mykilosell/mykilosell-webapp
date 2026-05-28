@@ -81,14 +81,7 @@
 </head>
 <body>
 
-    <datalist id="cities">
-        <option value="Bangkok, Thailand">
-        <option value="Yangon, Myanmar">
-        <option value="Singapore, Singapore">
-        <option value="Kuala Lumpur, Malaysia">
-        <option value="Tokyo, Japan">
-        <option value="London, UK">
-    </datalist>
+    <datalist id="cities"></datalist>
 
     <div id="screen-onboard" class="screen active-screen">
         <h2>Welcome to MyKiloSell</h2>
@@ -212,7 +205,7 @@
 
         <div class="post-card">
             <div class="post-header">
-                <strong>✈️ Bangkok ➡️ Yangon</strong>
+                <strong>✈️ Bangkok, Thailand ➡️ Yangon, Myanmar</strong>
                 <span style="color:#aaa;">30 May 2026</span>
             </div>
             <p class="badge-seller">Traveler Offer</p>
@@ -228,7 +221,7 @@
         <div class="post-card sold-out">
             <div class="sold-out-badge">SOLD OUT</div>
             <div class="post-header">
-                <strong>✈️ Singapore ➡️ Yangon</strong>
+                <strong>✈️ Singapore, Singapore ➡️ Yangon, Myanmar</strong>
                 <span style="color:#aaa;">29 May 2026</span>
             </div>
             <p class="badge-seller">Traveler Offer</p>
@@ -277,12 +270,10 @@
         <div class="modal-content" style="text-align:center;">
             <h2 style="color:var(--success-btn);">✅ Request Accepted!</h2>
             <p><strong>Traveler:</strong> Aung (BKK ➡️ YGN)</p>
-            
             <div style="background:var(--input-bg); padding:15px; border-radius:8px; margin:20px 0;">
                 <p style="margin:0 0 10px 0; color:#aaa;">📞 Phone Number</p>
                 <h3 style="margin:0;">+66 123 456 789</h3>
             </div>
-            
             <button class="btn" style="background:#0088cc;" onclick="alert('Opening Telegram Chat...')">✈️ Chat on Telegram</button>
             <button class="btn btn-outline" onclick="this.parentElement.parentElement.style.display='none'">Close</button>
         </div>
@@ -308,6 +299,37 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
         let currentKilo = 10;
+
+        // 🌍 အဓိက မြို့ကြီးများ စာရင်း (Javascript)
+        const globalCities = [
+            "Bangkok, Thailand", "Chiang Mai, Thailand", "Phuket, Thailand", "Mae Sot, Thailand",
+            "Yangon, Myanmar", "Mandalay, Myanmar", "Naypyidaw, Myanmar", "Tachileik, Myanmar",
+            "Singapore, Singapore", 
+            "Kuala Lumpur, Malaysia", "Penang, Malaysia",
+            "Tokyo, Japan", "Osaka, Japan", 
+            "Seoul, South Korea", "Busan, South Korea",
+            "London, UK", "Manchester, UK",
+            "Dubai, UAE", "Abu Dhabi, UAE",
+            "Taipei, Taiwan", "Hong Kong", "Macau",
+            "Beijing, China", "Guangzhou, China", "Ruili, China",
+            "New York, USA", "Los Angeles, USA", "San Francisco, USA",
+            "Sydney, Australia", "Melbourne, Australia",
+            "Ho Chi Minh, Vietnam", "Hanoi, Vietnam",
+            "Manila, Philippines", "Jakarta, Indonesia", "New Delhi, India"
+        ];
+
+        // 🔄 စာမျက်နှာပွင့်တာနဲ့ မြို့စာရင်းများကို Datalist ထဲသို့ အော်တို ဖြည့်သွင်းပေးမည့် Function
+        function loadCities() {
+            const dataList = document.getElementById('cities');
+            globalCities.forEach(city => {
+                let option = document.createElement('option');
+                option.value = city;
+                dataList.appendChild(option);
+            });
+        }
+        
+        // App စပွင့်တာနဲ့ loadCities ကို အလုပ်လုပ်ခိုင်းမည်
+        loadCities();
 
         function nav(screenId) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
