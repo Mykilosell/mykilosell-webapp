@@ -2,48 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MyKiloSell WebApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        .screen { display: none; }
+        /* အစ်ကို့ မူလ CSS အတိုင်း အကုန်လုံး ထည့်ထားပါတယ် */
+        :root { --bg-color: #12181f; --text-color: #ffffff; --primary-btn: #0088cc; --input-bg: #2a3542; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; margin: 0; padding: 15px; }
+        .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; padding-bottom: 50px; }
         .active-screen { display: block; }
+        .btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border: none; border-radius: 8px; background-color: var(--primary-btn); color: white; font-weight: bold; cursor: pointer; }
+        .form-group { margin-bottom: 15px; }
+        input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: var(--input-bg); color: white; box-sizing: border-box; }
     </style>
 </head>
 <body>
+
+    <div id="screen-onboard" class="screen active-screen">...</div>
+    <div id="screen-hub" class="screen">...</div>
+
+    <div id="screen-sell" class="screen">
+        <h2>✈️ Post Your Travel</h2>
+        <div class="form-group"><input type="text" id="s-from" placeholder="From"></div>
+        <div class="form-group"><input type="text" id="s-to" placeholder="To"></div>
+        <div class="form-group"><input type="number" id="s-kilo" placeholder="Kilos"></div>
+        <div class="form-group"><input type="number" id="s-price" placeholder="Price"></div>
+        <button class="btn btn-success" onclick="sendToTelegram('Travel')">✅ Post Travel</button>
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
+    </div>
+
+    <div id="screen-buy" class="screen">
+        <h2>📦 Post Cargo Request</h2>
+        <div class="form-group"><input type="text" id="b-from" placeholder="From"></div>
+        <div class="form-group"><input type="text" id="b-to" placeholder="To"></div>
+        <button class="btn" style="background-color: #f39c12;" onclick="sendToTelegram('Cargo')">✅ Post Request</button>
+        <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
+    </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 1. Navigation Function (ဒီတစ်ခု လိုနေတာပါ)
+        // အစ်ကိုပေးထားတဲ့ Token နှင့် ID
+        const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
+        const CHAT_ID = "8655443147";
+
+        async function sendToTelegram(type) {
+            let msg = `🚀 *New ${type} Post*\n👤 User: ${tg.initDataUnsafe.user?.first_name || "Guest"}\n`;
+            
+            if(type === 'Travel') {
+                msg += `🛫 From: ${document.getElementById('s-from').value}\n🛬 To: ${document.getElementById('s-to').value}\n⚖️ Kilo: ${document.getElementById('s-kilo').value}`;
+            } else {
+                msg += `🛫 From: ${document.getElementById('b-from').value}\n🛬 To: ${document.getElementById('b-to').value}`;
+            }
+
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+            try {
+                await fetch(url);
+                alert("Successfully posted to your Telegram!");
+                nav('screen-hub');
+            } catch (err) { alert("Error: " + err); }
+        }
+
+        // အစ်ကို့ရဲ့ မူလ navigation function
         function nav(screenId) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
-            window.scrollTo(0, 0);
-        }
-
-        // 2. Google Sheets Link (လင့်ခ်အမှန်)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUpnbjrhv9h8MbQDUNjvcCmhZGGl5JPomf40OZXNU6C_XgRnUfvJuttLGdvPMR_cmMVQ/exec";
-
-        async function postToDatabase(type) {
-            let data = {
-                userName: tg.initDataUnsafe.user?.first_name || "Guest",
-                type: type,
-                from: document.getElementById(type === 'Travel Offer' ? 's-from' : 'b-from').value,
-                to: document.getElementById(type === 'Travel Offer' ? 's-to' : 'b-to').value,
-                kilo: document.getElementById(type === 'Travel Offer' ? 's-kilo' : 'b-kilo').value,
-                price: document.getElementById(type === 'Travel Offer' ? 's-price' : 'b-price').value
-            };
-
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: "POST", mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-                alert("Posted Successfully!");
-                nav('screen-hub'); 
-            } catch (e) { alert("Error: " + e); }
         }
     </script>
 </body>
