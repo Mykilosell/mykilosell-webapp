@@ -120,38 +120,38 @@
         
         <div class="form-group">
             <label id="t-lbl-s-from">🛫 Leaving From</label>
-            <input type="text" list="cities" placeholder="Search city (e.g. London)">
+            <input type="text" id="s-from" list="cities" placeholder="Search city (e.g. London)">
         </div>
         <div class="form-group">
             <label id="t-lbl-s-to">🛬 Going To</label>
-            <input type="text" list="cities" placeholder="Search city (e.g. Yangon)">
+            <input type="text" id="s-to" list="cities" placeholder="Search city (e.g. Yangon)">
         </div>
         <div class="form-group">
             <label id="t-lbl-s-date">📅 Departure Date</label>
-            <input type="date">
+            <input type="date" id="s-date">
         </div>
         <div class="form-group">
             <label id="t-lbl-s-kilo">⚖️ Available Kilos</label>
-            <input type="number" placeholder="e.g. 10" min="1">
+            <input type="number" id="s-kilo" placeholder="e.g. 10" min="1">
         </div>
         <div class="form-group">
             <label id="t-lbl-s-price">💰 Price Per Kilo</label>
             <div class="price-group">
-                <select><option>THB</option><option>MMK</option><option>USD</option><option>SGD</option></select>
-                <input type="number" placeholder="Amount">
+                <select id="s-currency"><option>THB</option><option>MMK</option><option>USD</option><option>SGD</option></select>
+                <input type="number" id="s-price" placeholder="Amount">
             </div>
         </div>
         <div class="form-group" style="background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 8px; border: 1px solid #2e7d32;">
             <label id="t-lbl-s-contact">☎️ Protected Contact</label>
-            <input type="tel" value="+66 123 456 789" style="background: #111; color: #aaa;">
+            <input type="tel" id="s-contact" value="+66 123 456 789" style="background: #111; color: #aaa;">
             <p style="font-size: 12px; color: #888; margin-top: 5px;">🔒 Your Telegram & phone are hidden. Only shown if you Allow requests.</p>
         </div>
         <div class="form-group">
             <label id="t-lbl-s-note">📝 Notes / Rules</label>
-            <textarea rows="2" placeholder="e.g. No liquids, meet at airport"></textarea>
+            <textarea id="s-note" rows="2" placeholder="e.g. No liquids, meet at airport"></textarea>
         </div>
         
-        <button class="btn btn-success" onclick="alertAction('Travel Posted Successfully!', 'screen-hub')">✅ Post Travel</button>
+        <button class="btn btn-success" onclick="postToDatabase('Travel Offer')">✅ Post Travel</button>
         <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
     </div>
 
@@ -160,38 +160,38 @@
         
         <div class="form-group">
             <label id="t-lbl-b-from">🛫 Send From</label>
-            <input type="text" list="cities" placeholder="Search city">
+            <input type="text" id="b-from" list="cities" placeholder="Search city">
         </div>
         <div class="form-group">
             <label id="t-lbl-b-to">🛬 Send To</label>
-            <input type="text" list="cities" placeholder="Search city">
+            <input type="text" id="b-to" list="cities" placeholder="Search city">
         </div>
         <div class="form-group">
             <label id="t-lbl-b-date">📅 Send By Date</label>
-            <input type="date">
+            <input type="date" id="b-date">
         </div>
         <div class="form-group">
             <label id="t-lbl-b-kilo">⚖️ Required Kilos</label>
-            <input type="number" placeholder="e.g. 5" min="1">
+            <input type="number" id="b-kilo" placeholder="e.g. 5" min="1">
         </div>
         <div class="form-group">
             <label id="t-lbl-b-item">🛍️ Item Type (Required)</label>
-            <input type="text" placeholder="e.g. Documents, Clothes">
+            <input type="text" id="b-item" placeholder="e.g. Documents, Clothes">
         </div>
         <div class="form-group">
             <label id="t-lbl-b-price">💰 Offer Price (Per Kilo)</label>
             <div class="price-group">
-                <select><option>THB</option><option>MMK</option><option>SGD</option></select>
-                <input type="number" placeholder="Amount">
+                <select id="b-currency"><option>THB</option><option>MMK</option><option>SGD</option></select>
+                <input type="number" id="b-price" placeholder="Amount">
             </div>
         </div>
         <div class="form-group" style="background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 8px; border: 1px solid #2e7d32;">
             <label>☎️ Protected Contact</label>
-            <input type="tel" value="+66 123 456 789" style="background: #111; color: #aaa;">
+            <input type="tel" id="b-contact" value="+66 123 456 789" style="background: #111; color: #aaa;">
             <p style="font-size: 12px; color: #888; margin-top: 5px;">🔒 Your info is hidden until you Allow requests.</p>
         </div>
         
-        <button class="btn" style="background-color: #f39c12;" onclick="alertAction('Cargo Request Posted!', 'screen-hub')">✅ Post Request</button>
+        <button class="btn" style="background-color: #f39c12;" onclick="postToDatabase('Cargo Request')">✅ Post Request</button>
         <button class="btn btn-outline" onclick="nav('screen-hub')">⬅️ Back</button>
     </div>
 
@@ -299,6 +299,59 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
         let currentKilo = 10;
+
+        // 🌟 ဤအပိုင်းသည် Google Sheets သို့ ဒေတာပို့ပေးသော အသစ်ထည့်ထားသည့် Function ဖြစ်သည်
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8qHgn6-2X23oGin3EtjShZ3o3ReV1uPL0DDfkc73CPc2G-KPyE-UjwqRoa6EXHql5Ow/exec";
+
+        async function postToDatabase(type) {
+            let data = {};
+            
+            // Travel (Sell) ဖြစ်စေ၊ Cargo (Buy) ဖြစ်စေ အချက်အလက်များ ဖမ်းယူခြင်း
+            if(type === 'Travel Offer') {
+                data = {
+                    userName: tg.initDataUnsafe.user?.first_name || "Guest User",
+                    type: type,
+                    from: document.getElementById('s-from').value,
+                    to: document.getElementById('s-to').value,
+                    kilo: document.getElementById('s-kilo').value,
+                    price: document.getElementById('s-price').value + " " + document.getElementById('s-currency').value,
+                    contact: document.getElementById('s-contact').value,
+                    note: document.getElementById('s-note').value + " (Date: " + document.getElementById('s-date').value + ")"
+                };
+            } else {
+                data = {
+                    userName: tg.initDataUnsafe.user?.first_name || "Guest User",
+                    type: type,
+                    from: document.getElementById('b-from').value,
+                    to: document.getElementById('b-to').value,
+                    kilo: document.getElementById('b-kilo').value,
+                    price: document.getElementById('b-price').value + " " + document.getElementById('b-currency').value,
+                    contact: document.getElementById('b-contact').value,
+                    note: document.getElementById('b-item').value + " (Date: " + document.getElementById('b-date').value + ")"
+                };
+            }
+
+            // Telegram Haptic Feedback (တုန်ခါမှု)
+            tg.HapticFeedback.impactOccurred('medium');
+
+            try {
+                // Google Sheets သို့ ဒေတာပို့ခြင်း
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                
+                tg.HapticFeedback.notificationOccurred('success');
+                alert(type + " Posted Successfully! Saved to Dashboard.");
+                nav('screen-hub'); // ပို့စ်တင်ပြီးပါက ပင်မစာမျက်နှာသို့ ပြန်သွားမည်
+                
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Post failed. Please check your connection.");
+            }
+        }
 
         // 🌍 အဓိက မြို့ကြီးများ စာရင်း (Javascript)
         const globalCities = [
