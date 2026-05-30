@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MyKiloSell</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
@@ -328,7 +333,7 @@
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
 
-    <button class="btn btn-success" onclick="window.sendToTelegram('Travel Offer')">Post Travel →</button>
+    <button class="btn btn-success" onclick="sendToTelegram('Travel Offer', this)">Post Travel →</button>
 </div>
 
 <div id="screen-buy" class="screen">
@@ -365,7 +370,7 @@
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
 
-    <button class="btn btn-gold" onclick="window.sendToTelegram('Cargo Request')">Post Request →</button>
+    <button class="btn btn-gold" onclick="sendToTelegram('Cargo Request', this)">Post Request →</button>
 </div>
 
 <div id="screen-market" class="screen">
@@ -421,7 +426,7 @@
     <div class="modal-box">
         <h3>Request Contact</h3>
         <p>A request will be sent via Telegram Bot. The traveler will be notified and can choose to share their contact with you.</p>
-        <button class="btn btn-success" onclick="document.getElementById('modal-contact').classList.remove('open'); document.getElementById('modal-revealed').classList.add('open'); window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred('success')">Send Request ✓</button>
+        <button class="btn btn-success" onclick="document.getElementById('modal-contact').classList.remove('open'); document.getElementById('modal-revealed').classList.add('open'); if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');">Send Request ✓</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-contact').classList.remove('open')">Cancel</button>
     </div>
 </div>
@@ -460,10 +465,8 @@
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+<script>
+    // Initialize Firebase (Standard Method)
     const firebaseConfig = {
         apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
         authDomain: "mykilosell-2d08d.firebaseapp.com",
@@ -472,15 +475,22 @@
         messagingSenderId: "771744850460",
         appId: "1:771744850460:web:3b669b5d4c3ef6d64c75d9"
     };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    let tg = window.Telegram?.WebApp;
-    if(tg) tg.expand();
+    // Telegram Setup
+    let tg = null;
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        if (typeof tg.expand === 'function') {
+            tg.expand();
+        }
+    }
 
     let currentKilo = 10;
     let allPosts = [];
 
+    // Cities Setup
     const globalCities = [
         "Bangkok, Thailand","Chiang Mai, Thailand","Phuket, Thailand","Mae Sot, Thailand",
         "Yangon, Myanmar","Mandalay, Myanmar","Naypyidaw, Myanmar","Tachileik, Myanmar",
@@ -492,28 +502,34 @@
         "Sydney, Australia","Melbourne, Australia","Ho Chi Minh, Vietnam","Hanoi, Vietnam",
         "Manila, Philippines","Jakarta, Indonesia","New Delhi, India"
     ];
-    const dl = document.getElementById('cities');
-    globalCities.forEach(c => { let o=document.createElement('option'); o.value=c; dl.appendChild(o); });
+    
+    window.onload = function() {
+        const dl = document.getElementById('cities');
+        globalCities.forEach(c => { 
+            let o = document.createElement('option'); 
+            o.value = c; 
+            dl.appendChild(o); 
+        });
+    };
 
-    window.nav = function(id) {
+    function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         window.scrollTo(0,0);
     }
 
-    window.checkScroll = function(el) {
+    function checkScroll(el) {
         if(el.scrollHeight - Math.ceil(el.scrollTop) <= el.clientHeight + 5) {
             const chk = document.getElementById('chk-agree');
             if(chk.disabled) {
                 chk.disabled = false;
-                const lang = document.querySelector('.lang-pill button.active')?.dataset?.lang || 'en';
                 document.getElementById('t-agree-text').innerText = dict[currentLang]['t-agree-text'];
-                if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
         }
     }
 
-    window.langPill = function(btn) {
+    function langPill(btn) {
         document.querySelectorAll('.lang-pill button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
@@ -558,7 +574,7 @@
         }
     };
 
-    window.setLang = function(lang) {
+    function setLang(lang) {
         currentLang = lang;
         const d = dict[lang];
         for(let id in d) {
@@ -570,48 +586,55 @@
 
         const chk = document.getElementById('chk-agree');
         document.getElementById('t-agree-text').innerText = chk.disabled ? d['t-scroll-msg'] : d['t-agree-text'];
-        // reset scroll & checkbox when lang changes
+        
         const box = document.getElementById('terms-scroll');
         box.scrollTop = 0;
         chk.disabled = true;
         chk.checked = false;
         document.getElementById('btn-start').disabled = true;
     }
-    window.setLang('en');
+    setLang('en');
 
-    window.updateKilo = function(v) {
+    function updateKilo(v) {
         if(currentKilo + v >= 0) {
             currentKilo += v;
             document.getElementById('edit-kilo-val').innerText = currentKilo;
-            if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
     }
 
-    window.saveEdit = function() {
+    function saveEdit() {
         const p = document.getElementById('edit-price-val').value;
         document.getElementById('disp-kilo').innerText = currentKilo + ' kg';
         document.getElementById('disp-price').innerText = p + ' THB';
         document.getElementById('modal-edit').classList.remove('open');
-        if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     }
 
-    window.markSoldOut = function(btn) {
+    function markSoldOut(btn) {
         if(confirm("Mark this post as SOLD OUT?")) {
             const card = btn.closest('.my-card');
             card.style.opacity = '0.5';
             btn.parentElement.innerHTML = '<div class="sold-badge">🚫 SOLD OUT</div>';
-            if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
         }
     }
 
     const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
     const CHAT_ID = "8655443147";
 
-    window.sendToTelegram = async function(type) {
-        let userName = "Guest User";
-        if(tg?.initDataUnsafe?.user?.first_name) userName = tg.initDataUnsafe.user.first_name;
+    async function sendToTelegram(type, btnElement) {
+        // Change button state to show loading
+        let originalText = btnElement.innerText;
+        btnElement.disabled = true;
+        btnElement.innerText = "⏳ Posting...";
 
-        let postData = { type, user: userName, timestamp: Date.now() };
+        let userName = "Guest User";
+        if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+            userName = tg.initDataUnsafe.user.first_name;
+        }
+
+        let postData = { type: type, user: userName, timestamp: Date.now() };
         let msg = `🔒 *New ${type} (Contact Hidden)*\n👤 User: ${userName}\n`;
 
         if(type === 'Travel Offer') {
@@ -636,30 +659,42 @@
         msg += `\n⚠️ *Contact Info is protected until approved by user.*`;
 
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
         try {
-            await push(ref(db, 'posts'), postData);
+            // Firebase Upload
+            await db.ref('posts').push(postData);
+            
+            // Telegram Bot Notification
             await fetch(url);
-            if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             alert(type + " posted successfully! Your contact is hidden.");
+            
+            // Clear inputs
             document.querySelectorAll('input[type=text], input[type=number], input[type=date], textarea').forEach(i => i.value='');
-            window.nav('screen-market');
+            
+            nav('screen-market');
         } catch(err) {
             console.error(err);
             alert("Post failed. Please check your connection.");
+        } finally {
+            // Revert button state
+            btnElement.disabled = false;
+            btnElement.innerText = originalText;
         }
     }
 
-    window.filterPosts = function() {
+    function filterPosts() {
         renderPosts(allPosts);
     }
 
     function renderPosts(posts) {
         const container = document.getElementById('market-posts-container');
         if(!container) return;
-        const fFrom = document.getElementById('f-from')?.value.toLowerCase() || '';
-        const fTo = document.getElementById('f-to')?.value.toLowerCase() || '';
+        
+        const fFrom = document.getElementById('f-from') ? document.getElementById('f-from').value.toLowerCase() : '';
+        const fTo = document.getElementById('f-to') ? document.getElementById('f-to').value.toLowerCase() : '';
 
         let filtered = posts.filter(p => {
             const matchFrom = !fFrom || (p.from||'').toLowerCase().includes(fFrom);
@@ -705,12 +740,16 @@
         });
     }
 
-    onValue(ref(db, 'posts'), (snapshot) => {
+    // Auto-fetch posts from Firebase
+    db.ref('posts').on('value', (snapshot) => {
         allPosts = [];
-        snapshot.forEach(child => allPosts.push({ id: child.key, ...child.val() }));
+        snapshot.forEach(child => {
+            allPosts.push({ id: child.key, ...child.val() });
+        });
         allPosts.reverse();
         renderPosts(allPosts);
     });
+
 </script>
 </body>
 </html>
