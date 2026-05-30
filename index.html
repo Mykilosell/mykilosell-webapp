@@ -6,7 +6,6 @@
     <title>MyKiloSell</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -25,7 +24,6 @@
             --dimmed: #3d4659;
             --accent: #3d7fff;
             --accent-dim: rgba(61,127,255,0.12);
-            --accent-glow: rgba(61,127,255,0.25);
             --gold: #f5b731;
             --gold-dim: rgba(245,183,49,0.12);
             --green: #34d47a;
@@ -44,30 +42,18 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
-
-        /* ── Screens ── */
         .screen { display: none; padding: 20px 16px 80px; max-width: 500px; margin: 0 auto; animation: rise 0.28s ease; }
         .screen.active { display: block; }
         @keyframes rise { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:translateY(0); } }
-
-        /* ── Header ── */
         .page-header { margin-bottom: 28px; }
         .page-header .label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.12em; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
         .page-header h1 { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; line-height:1.15; color:var(--text); }
-        .page-header p { color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5; }
-
-        /* ── Logo Strip ── */
         .logo-strip { display:flex; align-items:center; gap:10px; padding:20px 0 28px; }
         .logo-mark { width:42px; height:42px; background:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .logo-mark svg { width:22px; height:22px; fill:white; }
         .logo-text { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--text); }
         .logo-text span { color:var(--accent); }
-
-        /* ── Cards ── */
         .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:12px; }
-        .card-tight { padding:14px 16px; }
-
-        /* ── Form elements ── */
         .form-group { margin-bottom:14px; }
         .form-label { display:block; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
         input[type=text], input[type=number], input[type=date], input[type=tel], select, textarea {
@@ -76,18 +62,15 @@
             outline:none; appearance:none; -webkit-appearance:none; transition:border-color 0.15s;
         }
         input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+        input.error { border-color: var(--red) !important; }
         select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8599' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; cursor:pointer; }
         textarea { resize:none; line-height:1.5; }
         ::placeholder { color:var(--dimmed); }
         input[type=date]::-webkit-calendar-picker-indicator { filter:invert(0.5); }
-
-        /* ── Price row ── */
         .price-row { display:flex; gap:10px; }
         .price-row select { width:100px; flex-shrink:0; }
         .price-row input { flex:1; }
-
-        /* ── Buttons ── */
-        .btn { display:block; width:100%; padding:15px; border:none; border-radius:var(--radius-sm); font-family:'Syne',sans-serif; font-size:15px; font-weight:700; letter-spacing:0.01em; cursor:pointer; transition:transform 0.12s, opacity 0.12s; -webkit-tap-highlight-color:transparent; }
+        .btn { display:block; width:100%; padding:15px; border:none; border-radius:var(--radius-sm); font-family:'Syne',sans-serif; font-size:15px; font-weight:700; letter-spacing:0.01em; cursor:pointer; transition:transform 0.12s, opacity 0.12s; -webkit-tap-highlight-color:transparent; text-align:center; }
         .btn:active { transform:scale(0.975); }
         .btn-primary { background:var(--accent); color:white; }
         .btn-gold { background:var(--gold); color:#1a1200; }
@@ -97,8 +80,6 @@
         .btn-success { background:var(--green); color:#001a0d; }
         .btn:disabled { opacity:0.35; pointer-events:none; }
         .btn + .btn { margin-top:10px; }
-
-        /* ── Hub cards ── */
         .hub-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:12px; cursor:pointer; display:flex; align-items:center; gap:16px; transition:border-color 0.15s, background 0.15s; -webkit-tap-highlight-color:transparent; }
         .hub-card:active { background:var(--surface2); }
         .hub-card .icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
@@ -110,43 +91,27 @@
         .hub-buy .icon { background:var(--gold-dim); }
         .hub-market .icon { background:var(--green-dim); }
         .hub-manage .icon { background:var(--surface3); }
-
-        /* ── Divider ── */
         .divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
-
-        /* ── Terms box ── */
         .terms-box { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); height:160px; overflow-y:auto; padding:16px; font-size:13px; line-height:1.7; color:var(--muted); margin-bottom:18px; }
         .terms-box::-webkit-scrollbar { width:4px; }
-        .terms-box::-webkit-scrollbar-track { background:transparent; }
         .terms-box::-webkit-scrollbar-thumb { background:var(--dimmed); border-radius:4px; }
-
-        /* ── Agree row ── */
         .agree-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:22px; }
         .agree-row input[type=checkbox] { width:20px; height:20px; min-width:20px; margin-top:1px; accent-color:var(--accent); }
         .agree-row label { font-size:13px; color:var(--muted); line-height:1.5; cursor:pointer; }
-
-        /* ── Lang select ── */
         .lang-pill { display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:50px; padding:4px; gap:4px; margin-bottom:24px; }
         .lang-pill button { flex:1; padding:8px; border:none; background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:14px; border-radius:40px; cursor:pointer; transition:all 0.15s; }
         .lang-pill button.active { background:var(--accent); color:white; font-weight:500; }
-
-        /* ── Protected contact block ── */
         .contact-block { background:var(--green-dim); border:1px solid rgba(52,212,122,0.2); border-radius:var(--radius-sm); padding:14px; margin-bottom:14px; }
         .contact-block input { background:var(--surface); color:var(--muted); border-color:var(--border); }
         .contact-block .lock-note { font-size:11px; color:var(--green); margin-top:8px; display:flex; align-items:center; gap:5px; }
-
-        /* ── Market post card ── */
         .post-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
         .post-route { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
         .post-route .city { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; }
-        .post-route .arrow-line { flex:1; display:flex; align-items:center; gap:0; }
         .post-route .line { flex:1; height:1px; background:var(--dimmed); }
-        .post-route .dot { width:6px; height:6px; border-radius:50%; background:var(--dimmed); }
         .post-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
         .pill { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:50px; font-size:12px; font-family:'DM Mono',monospace; }
         .pill-blue { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(61,127,255,0.2); }
         .pill-gold { background:var(--gold-dim); color:var(--gold); border:1px solid rgba(245,183,49,0.2); }
-        .pill-green { background:var(--green-dim); color:var(--green); border:1px solid rgba(52,212,122,0.2); }
         .pill-gray { background:var(--surface3); color:var(--muted); border:1px solid var(--border); }
         .post-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
         .stat-cell { background:var(--surface2); border-radius:var(--radius-sm); padding:10px 12px; }
@@ -154,55 +119,39 @@
         .stat-cell .s-val { font-size:17px; font-family:'Syne',sans-serif; font-weight:700; }
         .post-note { font-size:12px; color:var(--muted); background:var(--surface2); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:14px; line-height:1.5; }
         .sold-badge { background:var(--red-dim); color:var(--red); border:1px solid rgba(240,79,79,0.25); border-radius:var(--radius-sm); padding:12px; text-align:center; font-family:'Syne',sans-serif; font-size:14px; font-weight:700; letter-spacing:0.05em; }
-        .sold-out-card { opacity:0.5; }
-
-        /* ── My posts card ── */
         .my-card { background:var(--surface); border:1px solid var(--accent); border-radius:var(--radius); padding:18px; margin-bottom:14px; }
-
-        /* ── Back button strip ── */
         .back-btn { display:inline-flex; align-items:center; gap:7px; color:var(--muted); font-size:14px; background:none; border:none; cursor:pointer; padding:0; margin-bottom:22px; -webkit-tap-highlight-color:transparent; }
         .back-btn svg { width:16px; height:16px; }
-
-        /* ── Modal ── */
-        .modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:flex-end; justify-content:center; padding:16px; }
+        /* BUG FIX: display:flex must come AFTER display:none so .open can override */
+        .modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; padding:16px; align-items:center; justify-content:center; }
         .modal-wrap.open { display:flex; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius) var(--radius) 0 0; border-radius:var(--radius); width:100%; max-width:420px; padding:24px; animation:slideUp 0.25s ease; }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); width:100%; max-width:420px; padding:24px; animation:slideUp 0.25s ease; }
         @keyframes slideUp { from { transform:translateY(30px); opacity:0; } to { transform:translateY(0); opacity:1; } }
         .modal-box h3 { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; margin-bottom:6px; }
         .modal-box p { color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.5; }
-
-        /* ── Kilo editor ── */
         .kilo-editor { display:flex; align-items:center; justify-content:center; gap:20px; background:var(--surface2); border-radius:var(--radius-sm); padding:16px; margin:14px 0; }
         .kilo-btn { width:44px; height:44px; border-radius:10px; background:var(--accent); color:white; border:none; font-size:24px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
         .kilo-num { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; min-width:60px; text-align:center; }
-
-        /* ── Revealed card ── */
         .reveal-card { background:var(--surface2); border-radius:var(--radius-sm); padding:16px; margin:18px 0; }
         .reveal-card .r-label { font-size:11px; font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; }
         .reveal-card .r-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; }
-
-        /* ── Filter row ── */
         .filter-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
-
-        /* ── Empty state ── */
         .empty { text-align:center; padding:48px 20px; color:var(--muted); }
         .empty .e-icon { font-size:40px; margin-bottom:12px; opacity:0.4; }
         .empty p { font-size:14px; line-height:1.6; }
-
-        /* ── Loading ── */
         .loading-row { display:flex; align-items:center; gap:10px; padding:20px; color:var(--muted); font-size:13px; }
         .spinner { width:18px; height:18px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
         @keyframes spin { to { transform:rotate(360deg); } }
-
-        /* ── Scrollbar ── */
         ::-webkit-scrollbar { width:4px; }
-        ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:var(--dimmed); border-radius:4px; }
+        .validation-msg { color:var(--red); font-size:12px; margin-bottom:12px; display:none; }
+        .validation-msg.show { display:block; }
     </style>
 </head>
 <body>
 <datalist id="cities"></datalist>
 
+<!-- ONBOARD -->
 <div id="screen-onboard" class="screen active">
     <div class="logo-strip">
         <div class="logo-mark">
@@ -210,17 +159,14 @@
         </div>
         <div class="logo-text">Kilo<span>Sell</span></div>
     </div>
-
     <div class="lang-pill">
         <button class="active" onclick="setLang('en');langPill(this)">🇬🇧 English</button>
         <button onclick="setLang('mm');langPill(this)">🇲🇲 မြန်မာ</button>
     </div>
-
     <div class="page-header">
         <div class="label" id="t-terms-label">Terms & Conditions</div>
         <h1 id="t-terms-title">Read before you fly.</h1>
     </div>
-
     <div class="terms-box" id="terms-scroll" onscroll="checkScroll(this)">
         <div id="terms-en">
             <strong style="color:var(--text);">1. Platform Role</strong><br>
@@ -243,170 +189,131 @@
             အဆက်အသွယ်အချက်အလက်များကို ခွင့်ပြုချက် မပေးမချင်း လုံးဝဝှက်ထားပေးမည် ဖြစ်ပါသည်။
         </div>
     </div>
-
     <div class="agree-row">
         <input type="checkbox" id="chk-agree" disabled onchange="document.getElementById('btn-start').disabled=!this.checked">
         <label for="chk-agree" id="t-agree-text">Scroll to the bottom to enable.</label>
     </div>
-
     <button class="btn btn-primary" id="btn-start" disabled onclick="nav('screen-hub')">
         <span id="t-btn-start">Continue →</span>
     </button>
 </div>
 
+<!-- HUB -->
 <div id="screen-hub" class="screen">
     <div class="page-header" style="margin-bottom:20px;">
         <div class="label">Dashboard</div>
         <h1 id="t-hub-title">What's the move?</h1>
     </div>
-
     <div class="hub-card hub-sell" onclick="nav('screen-sell')">
         <div class="icon">✈️</div>
-        <div class="info">
-            <h3 id="t-btn-hub-sell">Post Your Travel</h3>
-            <p id="t-hub-sell-sub">Sell spare luggage kilos to earn on your trip</p>
-        </div>
+        <div class="info"><h3 id="t-btn-hub-sell">Post Your Travel</h3><p id="t-hub-sell-sub">Sell spare luggage kilos to earn on your trip</p></div>
         <div class="arrow">›</div>
     </div>
-
     <div class="hub-card hub-buy" onclick="nav('screen-buy')">
         <div class="icon">📦</div>
-        <div class="info">
-            <h3 id="t-btn-hub-buy">Post Cargo Need</h3>
-            <p id="t-hub-buy-sub">Find a traveler to carry your package</p>
-        </div>
+        <div class="info"><h3 id="t-btn-hub-buy">Post Cargo Need</h3><p id="t-hub-buy-sub">Find a traveler to carry your package</p></div>
         <div class="arrow">›</div>
     </div>
-
     <hr class="divider">
-
     <div class="hub-card hub-market" onclick="nav('screen-market')">
         <div class="icon">🌐</div>
-        <div class="info">
-            <h3 id="t-btn-hub-market">Marketplace</h3>
-            <p id="t-hub-market-sub">Browse live traveler & cargo listings</p>
-        </div>
+        <div class="info"><h3 id="t-btn-hub-market">Marketplace</h3><p id="t-hub-market-sub">Browse live traveler & cargo listings</p></div>
         <div class="arrow">›</div>
     </div>
-
     <div class="hub-card hub-manage" onclick="nav('screen-myposts')">
         <div class="icon">📋</div>
-        <div class="info">
-            <h3 id="t-btn-hub-manage">My Posts</h3>
-            <p id="t-hub-manage-sub">Edit kilos, price, or mark sold out</p>
-        </div>
+        <div class="info"><h3 id="t-btn-hub-manage">My Posts</h3><p id="t-hub-manage-sub">Edit kilos, price, or mark sold out</p></div>
         <div class="arrow">›</div>
     </div>
 </div>
 
+<!-- SELL -->
 <div id="screen-sell" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
     </button>
-    <div class="page-header">
-        <div class="label">Traveler</div>
-        <h1>Post Your Travel ✈️</h1>
-    </div>
-
+    <div class="page-header"><div class="label">Traveler</div><h1>Post Your Travel ✈️</h1></div>
     <div class="card">
-        <div class="form-group"><label class="form-label" id="t-lbl-s-from">Leaving From</label><input type="text" id="s-from" list="cities" placeholder="e.g. Bangkok, Thailand"></div>
-        <div class="form-group"><label class="form-label" id="t-lbl-s-to">Going To</label><input type="text" id="s-to" list="cities" placeholder="e.g. Yangon, Myanmar"></div>
-        <div class="form-group"><label class="form-label" id="t-lbl-s-date">Departure Date</label><input type="date" id="s-date"></div>
+        <div class="form-group"><label class="form-label">Leaving From</label><input type="text" id="s-from" list="cities" placeholder="e.g. Bangkok, Thailand"></div>
+        <div class="form-group"><label class="form-label">Going To</label><input type="text" id="s-to" list="cities" placeholder="e.g. Yangon, Myanmar"></div>
+        <div class="form-group"><label class="form-label">Departure Date</label><input type="date" id="s-date"></div>
     </div>
-
     <div class="card">
-        <div class="form-group"><label class="form-label" id="t-lbl-s-kilo">Available Kilos</label><input type="number" id="s-kilo" placeholder="e.g. 10" min="1"></div>
+        <div class="form-group"><label class="form-label">Available Kilos</label><input type="number" id="s-kilo" placeholder="e.g. 10" min="1"></div>
         <div class="form-group">
-            <label class="form-label" id="t-lbl-s-price">Price Per Kilo</label>
+            <label class="form-label">Price Per Kilo</label>
             <div class="price-row">
                 <select id="s-currency"><option>THB</option><option>MMK</option><option>USD</option><option>SGD</option></select>
-                <input type="number" id="s-price" placeholder="Amount">
+                <input type="number" id="s-price" placeholder="Amount" min="0">
             </div>
         </div>
-        <div class="form-group"><label class="form-label" id="t-lbl-s-note">Notes / Rules</label><textarea id="s-note" rows="2" placeholder="e.g. No liquids, meet at airport"></textarea></div>
+        <div class="form-group"><label class="form-label">Notes / Rules</label><textarea id="s-note" rows="2" placeholder="e.g. No liquids, meet at airport"></textarea></div>
     </div>
-
     <div class="contact-block">
         <div class="form-label">Protected Contact</div>
         <input type="tel" id="s-contact" value="+66 123 456 789" readonly>
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
-
+    <p class="validation-msg" id="sell-error">⚠️ Please fill in From, To, Date, Kilos, and Price.</p>
     <button class="btn btn-success" onclick="sendToTelegram('Travel Offer', this)">Post Travel →</button>
 </div>
 
+<!-- BUY -->
 <div id="screen-buy" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
     </button>
-    <div class="page-header">
-        <div class="label">Cargo</div>
-        <h1>Post Cargo Request 📦</h1>
-    </div>
-
+    <div class="page-header"><div class="label">Cargo</div><h1>Post Cargo Request 📦</h1></div>
     <div class="card">
-        <div class="form-group"><label class="form-label" id="t-lbl-b-from">Send From</label><input type="text" id="b-from" list="cities" placeholder="e.g. London, UK"></div>
-        <div class="form-group"><label class="form-label" id="t-lbl-b-to">Send To</label><input type="text" id="b-to" list="cities" placeholder="e.g. Yangon, Myanmar"></div>
-        <div class="form-group"><label class="form-label" id="t-lbl-b-date">Send By Date</label><input type="date" id="b-date"></div>
+        <div class="form-group"><label class="form-label">Send From</label><input type="text" id="b-from" list="cities" placeholder="e.g. London, UK"></div>
+        <div class="form-group"><label class="form-label">Send To</label><input type="text" id="b-to" list="cities" placeholder="e.g. Yangon, Myanmar"></div>
+        <div class="form-group"><label class="form-label">Send By Date</label><input type="date" id="b-date"></div>
     </div>
-
     <div class="card">
-        <div class="form-group"><label class="form-label" id="t-lbl-b-item">Item Type</label><input type="text" id="b-item" placeholder="e.g. Documents, Clothes"></div>
-        <div class="form-group"><label class="form-label" id="t-lbl-b-kilo">Required Kilos</label><input type="number" id="b-kilo" placeholder="e.g. 5" min="1"></div>
+        <div class="form-group"><label class="form-label">Item Type</label><input type="text" id="b-item" placeholder="e.g. Documents, Clothes"></div>
+        <div class="form-group"><label class="form-label">Required Kilos</label><input type="number" id="b-kilo" placeholder="e.g. 5" min="1"></div>
         <div class="form-group">
-            <label class="form-label" id="t-lbl-b-price">Offer Price Per Kilo</label>
+            <label class="form-label">Offer Price Per Kilo</label>
             <div class="price-row">
                 <select id="b-currency"><option>THB</option><option>MMK</option><option>SGD</option><option>USD</option></select>
-                <input type="number" id="b-price" placeholder="Amount">
+                <input type="number" id="b-price" placeholder="Amount" min="0">
             </div>
         </div>
     </div>
-
     <div class="contact-block">
         <div class="form-label">Protected Contact</div>
         <input type="tel" id="b-contact" value="+66 123 456 789" readonly>
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
-
+    <p class="validation-msg" id="buy-error">⚠️ Please fill in From, To, Date, Item, Kilos, and Price.</p>
     <button class="btn btn-gold" onclick="sendToTelegram('Cargo Request', this)">Post Request →</button>
 </div>
 
+<!-- MARKET -->
 <div id="screen-market" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
     </button>
-    <div class="page-header">
-        <div class="label">Live Listings</div>
-        <h1 id="t-market-title">Marketplace 🌐</h1>
-    </div>
-
+    <div class="page-header"><div class="label">Live Listings</div><h1 id="t-market-title">Marketplace 🌐</h1></div>
     <div class="filter-row">
         <input type="text" list="cities" placeholder="From…" id="f-from" oninput="filterPosts()">
         <input type="text" list="cities" placeholder="To…" id="f-to" oninput="filterPosts()">
     </div>
-
     <div id="market-posts-container">
         <div class="loading-row"><div class="spinner"></div>Loading live posts…</div>
     </div>
 </div>
 
+<!-- MY POSTS -->
 <div id="screen-myposts" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
     </button>
-    <div class="page-header">
-        <div class="label">Manage</div>
-        <h1 id="t-manage-title">My Posts 📋</h1>
-    </div>
-
-    <div class="my-card">
+    <div class="page-header"><div class="label">Manage</div><h1 id="t-manage-title">My Posts 📋</h1></div>
+    <div class="my-card" id="my-post-card">
         <div class="post-route" style="margin-bottom:8px;">
             <span class="city">Bangkok</span>
-            <div class="arrow-line" style="margin:0 8px;"><div class="line"></div><div style="margin:0 4px; color:var(--muted);">→</div><div class="line"></div></div>
+            <div style="margin:0 8px; display:flex; align-items:center; flex:1;"><div class="line"></div><div style="margin:0 6px; color:var(--muted);">→</div><div class="line"></div></div>
             <span class="city">Yangon</span>
         </div>
         <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -417,20 +324,29 @@
             <div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val" id="disp-kilo">10 kg</div></div>
             <div class="stat-cell"><div class="s-label">Price</div><div class="s-val" id="disp-price">40 THB</div></div>
         </div>
-        <button class="btn btn-outline" style="margin-bottom:8px;" onclick="document.getElementById('modal-edit').classList.add('open')">✏️ Edit Kilos & Price</button>
-        <button class="btn btn-danger" onclick="markSoldOut(this)">🚫 Mark as Sold Out</button>
+        <!-- BUG FIX: buttons wrapped in own div so markSoldOut only replaces this div, not the whole card -->
+        <div id="my-post-actions">
+            <button class="btn btn-outline" style="margin-bottom:8px;" onclick="document.getElementById('modal-edit').classList.add('open')">✏️ Edit Kilos & Price</button>
+            <button class="btn btn-danger" onclick="markSoldOut(this)">🚫 Mark as Sold Out</button>
+        </div>
     </div>
 </div>
 
+<!-- MODAL: Contact -->
 <div id="modal-contact" class="modal-wrap">
     <div class="modal-box">
         <h3>Request Contact</h3>
         <p>A request will be sent via Telegram Bot. The traveler will be notified and can choose to share their contact with you.</p>
-        <button class="btn btn-success" onclick="document.getElementById('modal-contact').classList.remove('open'); document.getElementById('modal-revealed').classList.add('open'); if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');">Send Request ✓</button>
+        <button class="btn btn-success" onclick="
+            document.getElementById('modal-contact').classList.remove('open');
+            document.getElementById('modal-revealed').classList.add('open');
+            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        ">Send Request ✓</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-contact').classList.remove('open')">Cancel</button>
     </div>
 </div>
 
+<!-- MODAL: Revealed -->
 <div id="modal-revealed" class="modal-wrap">
     <div class="modal-box">
         <h3>Contact Revealed ✅</h3>
@@ -446,6 +362,7 @@
     </div>
 </div>
 
+<!-- MODAL: Edit -->
 <div id="modal-edit" class="modal-wrap">
     <div class="modal-box">
         <h3>Update Listing</h3>
@@ -458,7 +375,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">Price Per Kilo</label>
-            <input type="number" id="edit-price-val" value="40">
+            <input type="number" id="edit-price-val" value="40" min="0">
         </div>
         <button class="btn btn-success" onclick="saveEdit()">Save Changes</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-edit').classList.remove('open')">Cancel</button>
@@ -466,7 +383,6 @@
 </div>
 
 <script>
-    // Initialize Firebase (Standard Method)
     const firebaseConfig = {
         apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
         authDomain: "mykilosell-2d08d.firebaseapp.com",
@@ -478,117 +394,105 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Telegram Setup
-    let tg = null;
-    if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
-        if (typeof tg.expand === 'function') {
-            tg.expand();
-        }
+    // BUG FIX: safe tg reference — never crashes if not in Telegram
+    var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+    if (tg && typeof tg.expand === 'function') tg.expand();
+
+    var currentKilo = 10;
+    var allPosts = [];
+    var firebaseLoaded = false;
+
+    // BUG FIX: XSS — escape all user-supplied strings before inserting into innerHTML
+    function esc(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
-    let currentKilo = 10;
-    let allPosts = [];
-
-    // Cities Setup
-    const globalCities = [
-        "Bangkok, Thailand","Chiang Mai, Thailand","Phuket, Thailand","Mae Sot, Thailand",
-        "Yangon, Myanmar","Mandalay, Myanmar","Naypyidaw, Myanmar","Tachileik, Myanmar",
-        "Singapore, Singapore","Kuala Lumpur, Malaysia","Penang, Malaysia",
-        "Tokyo, Japan","Osaka, Japan","Seoul, South Korea","Busan, South Korea",
-        "London, UK","Manchester, UK","Dubai, UAE","Abu Dhabi, UAE",
-        "Taipei, Taiwan","Hong Kong","Macau","Beijing, China","Guangzhou, China","Ruili, China",
-        "New York, USA","Los Angeles, USA","San Francisco, USA",
-        "Sydney, Australia","Melbourne, Australia","Ho Chi Minh, Vietnam","Hanoi, Vietnam",
-        "Manila, Philippines","Jakarta, Indonesia","New Delhi, India"
-    ];
-    
     window.onload = function() {
-        const dl = document.getElementById('cities');
-        globalCities.forEach(c => { 
-            let o = document.createElement('option'); 
-            o.value = c; 
-            dl.appendChild(o); 
+        var dl = document.getElementById('cities');
+        var cities = [
+            "Bangkok, Thailand","Chiang Mai, Thailand","Phuket, Thailand","Mae Sot, Thailand",
+            "Yangon, Myanmar","Mandalay, Myanmar","Naypyidaw, Myanmar","Tachileik, Myanmar",
+            "Singapore, Singapore","Kuala Lumpur, Malaysia","Penang, Malaysia",
+            "Tokyo, Japan","Osaka, Japan","Seoul, South Korea","Busan, South Korea",
+            "London, UK","Manchester, UK","Dubai, UAE","Abu Dhabi, UAE",
+            "Taipei, Taiwan","Hong Kong","Macau","Beijing, China","Guangzhou, China","Ruili, China",
+            "New York, USA","Los Angeles, USA","San Francisco, USA",
+            "Sydney, Australia","Melbourne, Australia","Ho Chi Minh, Vietnam","Hanoi, Vietnam",
+            "Manila, Philippines","Jakarta, Indonesia","New Delhi, India"
+        ];
+        cities.forEach(function(c) {
+            var o = document.createElement('option');
+            o.value = c;
+            dl.appendChild(o);
         });
     };
 
     function nav(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
         document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
     }
 
     function checkScroll(el) {
-        if(el.scrollHeight - Math.ceil(el.scrollTop) <= el.clientHeight + 5) {
-            const chk = document.getElementById('chk-agree');
-            if(chk.disabled) {
+        if (el.scrollHeight - Math.ceil(el.scrollTop) <= el.clientHeight + 5) {
+            var chk = document.getElementById('chk-agree');
+            if (chk.disabled) {
                 chk.disabled = false;
                 document.getElementById('t-agree-text').innerText = dict[currentLang]['t-agree-text'];
-                if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
         }
     }
 
     function langPill(btn) {
-        document.querySelectorAll('.lang-pill button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.lang-pill button').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
     }
 
-    let currentLang = 'en';
-    const dict = {
+    var currentLang = 'en';
+    var dict = {
         en: {
             't-agree-text': 'I have read and agree to the terms.',
             't-scroll-msg': 'Scroll to the end to enable.',
             't-hub-title': "What's the move?",
-            't-btn-hub-sell': 'Post Your Travel',
-            't-hub-sell-sub': 'Sell spare luggage kilos to earn on your trip',
-            't-btn-hub-buy': 'Post Cargo Need',
-            't-hub-buy-sub': 'Find a traveler to carry your package',
-            't-btn-hub-market': 'Marketplace',
-            't-hub-market-sub': 'Browse live traveler & cargo listings',
-            't-btn-hub-manage': 'My Posts',
-            't-hub-manage-sub': 'Edit kilos, price, or mark sold out',
-            't-market-title': 'Marketplace 🌐',
-            't-manage-title': 'My Posts 📋',
-            't-terms-label': 'Terms & Conditions',
-            't-terms-title': 'Read before you fly.',
-            't-btn-start': 'Continue →'
+            't-btn-hub-sell': 'Post Your Travel', 't-hub-sell-sub': 'Sell spare luggage kilos to earn on your trip',
+            't-btn-hub-buy': 'Post Cargo Need', 't-hub-buy-sub': 'Find a traveler to carry your package',
+            't-btn-hub-market': 'Marketplace', 't-hub-market-sub': 'Browse live traveler & cargo listings',
+            't-btn-hub-manage': 'My Posts', 't-hub-manage-sub': 'Edit kilos, price, or mark sold out',
+            't-market-title': 'Marketplace 🌐', 't-manage-title': 'My Posts 📋',
+            't-terms-label': 'Terms & Conditions', 't-terms-title': 'Read before you fly.', 't-btn-start': 'Continue →'
         },
         mm: {
             't-agree-text': 'စည်းကမ်းချက်များကို ဖတ်ရှုပြီး သဘောတူပါသည်။',
             't-scroll-msg': 'သဘောတူရန် အောက်ဆုံးအထိ ဆွဲဖတ်ပေးပါ။',
             't-hub-title': 'မည်သည့်လုပ်ဆောင်ချက်ကို ပြုလုပ်မည်?',
-            't-btn-hub-sell': 'ခရီးစဉ်အသစ်တင်ရန်',
-            't-hub-sell-sub': 'ကျန်ရှိသော ကီလိုများကို ရောင်းချပါ',
-            't-btn-hub-buy': 'ပစ္စည်းပို့ရန် တောင်းဆိုမည်',
-            't-hub-buy-sub': 'သင့်ပစ္စည်းကို သယ်ဆောင်မည့် ခရီးသွားရှာပါ',
-            't-btn-hub-market': 'ပင်မဈေးကွက်',
-            't-hub-market-sub': 'ကြော်ငြာများကို ကြည့်ရှုပါ',
-            't-btn-hub-manage': 'မိမိ၏ ခရီးစဉ်များ',
-            't-hub-manage-sub': 'ကီလို၊ ဈေးနှုန်း ပြင်ဆင်ရန်',
-            't-market-title': 'ပင်မဈေးကွက် 🌐',
-            't-manage-title': 'မိမိ၏ ကြော်ငြာများ 📋',
-            't-terms-label': 'စည်းကမ်းချက်များ',
-            't-terms-title': 'ဖတ်ပြီးမှ ဆက်လက်လုပ်ဆောင်ပါ။',
-            't-btn-start': 'ရှေ့ဆက်မည် →'
+            't-btn-hub-sell': 'ခရီးစဉ်အသစ်တင်ရန်', 't-hub-sell-sub': 'ကျန်ရှိသော ကီလိုများကို ရောင်းချပါ',
+            't-btn-hub-buy': 'ပစ္စည်းပို့ရန် တောင်းဆိုမည်', 't-hub-buy-sub': 'သင့်ပစ္စည်းကို သယ်ဆောင်မည့် ခရီးသွားရှာပါ',
+            't-btn-hub-market': 'ပင်မဈေးကွက်', 't-hub-market-sub': 'ကြော်ငြာများကို ကြည့်ရှုပါ',
+            't-btn-hub-manage': 'မိမိ၏ ခရီးစဉ်များ', 't-hub-manage-sub': 'ကီလို၊ ဈေးနှုန်း ပြင်ဆင်ရန်',
+            't-market-title': 'ပင်မဈေးကွက် 🌐', 't-manage-title': 'မိမိ၏ ကြော်ငြာများ 📋',
+            't-terms-label': 'စည်းကမ်းချက်များ', 't-terms-title': 'ဖတ်ပြီးမှ ဆက်လက်လုပ်ဆောင်ပါ။', 't-btn-start': 'ရှေ့ဆက်မည် →'
         }
     };
 
     function setLang(lang) {
         currentLang = lang;
-        const d = dict[lang];
-        for(let id in d) {
-            const el = document.getElementById(id);
-            if(el) el.innerText = d[id];
+        var d = dict[lang];
+        for (var id in d) {
+            var el = document.getElementById(id);
+            if (el) el.innerText = d[id];
         }
-        document.getElementById('terms-en').style.display = lang==='en'?'block':'none';
-        document.getElementById('terms-mm').style.display = lang==='mm'?'block':'none';
-
-        const chk = document.getElementById('chk-agree');
+        document.getElementById('terms-en').style.display = lang === 'en' ? 'block' : 'none';
+        document.getElementById('terms-mm').style.display = lang === 'mm' ? 'block' : 'none';
+        var chk = document.getElementById('chk-agree');
         document.getElementById('t-agree-text').innerText = chk.disabled ? d['t-scroll-msg'] : d['t-agree-text'];
-        
-        const box = document.getElementById('terms-scroll');
-        box.scrollTop = 0;
+        // Reset scroll gate when language changes
+        document.getElementById('terms-scroll').scrollTop = 0;
         chk.disabled = true;
         chk.checked = false;
         document.getElementById('btn-start').disabled = true;
@@ -596,160 +500,194 @@
     setLang('en');
 
     function updateKilo(v) {
-        if(currentKilo + v >= 0) {
+        if (currentKilo + v >= 0) {
             currentKilo += v;
             document.getElementById('edit-kilo-val').innerText = currentKilo;
-            if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
     }
 
     function saveEdit() {
-        const p = document.getElementById('edit-price-val').value;
+        var p = document.getElementById('edit-price-val').value;
         document.getElementById('disp-kilo').innerText = currentKilo + ' kg';
         document.getElementById('disp-price').innerText = p + ' THB';
         document.getElementById('modal-edit').classList.remove('open');
-        if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     }
 
+    // BUG FIX: only replace the actions div, not the whole card
     function markSoldOut(btn) {
-        if(confirm("Mark this post as SOLD OUT?")) {
-            const card = btn.closest('.my-card');
-            card.style.opacity = '0.5';
-            btn.parentElement.innerHTML = '<div class="sold-badge">🚫 SOLD OUT</div>';
-            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+        if (confirm("Mark this post as SOLD OUT?")) {
+            document.getElementById('my-post-card').style.opacity = '0.5';
+            document.getElementById('my-post-actions').innerHTML = '<div class="sold-badge">🚫 SOLD OUT</div>';
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
         }
     }
 
-    const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
-    const CHAT_ID = "8655443147";
+    // BUG FIX: validate required fields before posting
+    function validateSell() {
+        var ok = true;
+        var fields = ['s-from', 's-to', 's-date', 's-kilo', 's-price'];
+        fields.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+            else el.classList.remove('error');
+        });
+        document.getElementById('sell-error').classList.toggle('show', !ok);
+        return ok;
+    }
+
+    function validateBuy() {
+        var ok = true;
+        var fields = ['b-from', 'b-to', 'b-date', 'b-item', 'b-kilo', 'b-price'];
+        fields.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+            else el.classList.remove('error');
+        });
+        document.getElementById('buy-error').classList.toggle('show', !ok);
+        return ok;
+    }
+
+    var BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
+    var CHAT_ID = "8655443147";
 
     async function sendToTelegram(type, btnElement) {
-        // Change button state to show loading
-        let originalText = btnElement.innerText;
-        btnElement.disabled = true;
-        btnElement.innerText = "⏳ Posting...";
+        // BUG FIX: validate before doing anything
+        if (type === 'Travel Offer' && !validateSell()) return;
+        if (type === 'Cargo Request' && !validateBuy()) return;
 
-        let userName = "Guest User";
-        if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+        var originalText = btnElement.innerText;
+        btnElement.disabled = true;
+        btnElement.innerText = '⏳ Posting...';
+
+        var userName = 'Guest User';
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
             userName = tg.initDataUnsafe.user.first_name;
         }
 
-        let postData = { type: type, user: userName, timestamp: Date.now() };
-        let msg = `🔒 *New ${type} (Contact Hidden)*\n👤 User: ${userName}\n`;
+        var postData = { type: type, user: userName, timestamp: Date.now() };
+        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + userName + '\n';
 
-        if(type === 'Travel Offer') {
-            postData.from = document.getElementById('s-from').value;
-            postData.to = document.getElementById('s-to').value;
-            postData.date = document.getElementById('s-date').value;
-            postData.kilo = document.getElementById('s-kilo').value;
-            postData.price = document.getElementById('s-price').value;
+        if (type === 'Travel Offer') {
+            postData.from     = document.getElementById('s-from').value.trim();
+            postData.to       = document.getElementById('s-to').value.trim();
+            postData.date     = document.getElementById('s-date').value;
+            postData.kilo     = document.getElementById('s-kilo').value;
+            postData.price    = document.getElementById('s-price').value;
             postData.currency = document.getElementById('s-currency').value;
-            postData.note = document.getElementById('s-note').value;
-            msg += `🛫 From: ${postData.from}\n🛬 To: ${postData.to}\n📅 Date: ${postData.date}\n⚖️ Kilo: ${postData.kilo} Kg\n💰 Price: ${postData.price} ${postData.currency}\n📝 Note: ${postData.note}\n`;
+            postData.note     = document.getElementById('s-note').value.trim();
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to + '\n📅 Date: ' + postData.date +
+                   '\n⚖️ Kilo: ' + postData.kilo + ' Kg\n💰 Price: ' + postData.price + ' ' + postData.currency +
+                   '\n📝 Note: ' + postData.note + '\n';
         } else {
-            postData.from = document.getElementById('b-from').value;
-            postData.to = document.getElementById('b-to').value;
-            postData.date = document.getElementById('b-date').value;
-            postData.kilo = document.getElementById('b-kilo').value;
-            postData.price = document.getElementById('b-price').value;
+            postData.from     = document.getElementById('b-from').value.trim();
+            postData.to       = document.getElementById('b-to').value.trim();
+            postData.date     = document.getElementById('b-date').value;
+            postData.kilo     = document.getElementById('b-kilo').value;
+            postData.price    = document.getElementById('b-price').value;
             postData.currency = document.getElementById('b-currency').value;
-            postData.item = document.getElementById('b-item').value;
-            msg += `🛫 From: ${postData.from}\n🛬 To: ${postData.to}\n📅 Date: ${postData.date}\n⚖️ Kilo: ${postData.kilo} Kg\n🛍️ Item: ${postData.item}\n💰 Price: ${postData.price} ${postData.currency}\n`;
+            postData.item     = document.getElementById('b-item').value.trim();
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to + '\n📅 Date: ' + postData.date +
+                   '\n⚖️ Kilo: ' + postData.kilo + ' Kg\n🛍️ Item: ' + postData.item +
+                   '\n💰 Price: ' + postData.price + ' ' + postData.currency + '\n';
         }
-        msg += `\n⚠️ *Contact Info is protected until approved by user.*`;
+        msg += '\n⚠️ *Contact Info is protected until approved by user.*';
 
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        var url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + CHAT_ID +
+                  '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
+
+        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
         try {
-            // Firebase Upload
             await db.ref('posts').push(postData);
-            
-            // Telegram Bot Notification
             await fetch(url);
-            
-            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            alert(type + " posted successfully! Your contact is hidden.");
-            
-            // Clear inputs
-            document.querySelectorAll('input[type=text], input[type=number], input[type=date], textarea').forEach(i => i.value='');
-            
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            alert(type + ' posted successfully! Your contact is hidden.');
+            // Clear only text/number/date/textarea inputs, not readonly contact fields
+            ['s-from','s-to','s-date','s-kilo','s-price','s-note',
+             'b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
             nav('screen-market');
-        } catch(err) {
+        } catch (err) {
             console.error(err);
-            alert("Post failed. Please check your connection.");
+            alert('Post failed. Please check your connection.');
         } finally {
-            // Revert button state
+            // BUG FIX: always restore button even if nav() already changed the screen
             btnElement.disabled = false;
             btnElement.innerText = originalText;
         }
     }
 
     function filterPosts() {
+        // BUG FIX: show loading state if Firebase hasn't returned data yet
+        if (!firebaseLoaded) return;
         renderPosts(allPosts);
     }
 
     function renderPosts(posts) {
-        const container = document.getElementById('market-posts-container');
-        if(!container) return;
-        
-        const fFrom = document.getElementById('f-from') ? document.getElementById('f-from').value.toLowerCase() : '';
-        const fTo = document.getElementById('f-to') ? document.getElementById('f-to').value.toLowerCase() : '';
+        var container = document.getElementById('market-posts-container');
+        if (!container) return;
 
-        let filtered = posts.filter(p => {
-            const matchFrom = !fFrom || (p.from||'').toLowerCase().includes(fFrom);
-            const matchTo = !fTo || (p.to||'').toLowerCase().includes(fTo);
-            return matchFrom && matchTo;
+        var fFrom = (document.getElementById('f-from').value || '').toLowerCase();
+        var fTo   = (document.getElementById('f-to').value || '').toLowerCase();
+
+        var filtered = posts.filter(function(p) {
+            return (!fFrom || (p.from || '').toLowerCase().includes(fFrom)) &&
+                   (!fTo   || (p.to   || '').toLowerCase().includes(fTo));
         });
 
         container.innerHTML = '';
-        if(filtered.length === 0) {
+
+        if (filtered.length === 0) {
             container.innerHTML = '<div class="empty"><div class="e-icon">✈️</div><p>No listings yet.<br>Be the first to post!</p></div>';
             return;
         }
 
-        filtered.forEach(post => {
-            const isTravel = post.type === 'Travel Offer';
-            const pillClass = isTravel ? 'pill-blue' : 'pill-gold';
-            const pillIcon = isTravel ? '✈️' : '📦';
-            const div = document.createElement('div');
+        filtered.forEach(function(post) {
+            var isTravel   = post.type === 'Travel Offer';
+            var pillClass  = isTravel ? 'pill-blue' : 'pill-gold';
+            var pillIcon   = isTravel ? '✈️' : '📦';
+            var div = document.createElement('div');
             div.className = 'post-card';
-            div.innerHTML = `
-                <div class="post-route">
-                    <span class="city">${post.from || '?'}</span>
-                    <div class="arrow-line" style="margin:0 8px; display:flex; align-items:center; flex:1;">
-                        <div class="line"></div>
-                        <div style="margin:0 6px; color:var(--muted); font-size:13px;">→</div>
-                        <div class="line"></div>
-                    </div>
-                    <span class="city">${post.to || '?'}</span>
-                </div>
-                <div class="post-meta">
-                    <span class="pill ${pillClass}">${pillIcon} ${post.type}</span>
-                    ${post.date ? `<span class="pill pill-gray">${post.date}</span>` : ''}
-                    ${post.item ? `<span class="pill pill-gray">🛍️ ${post.item}</span>` : ''}
-                </div>
-                <div class="post-stats">
-                    <div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">${post.kilo || 0} kg</div></div>
-                    <div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">${post.price || 0} <span style="font-size:13px; color:var(--muted);">${post.currency||''}</span></div></div>
-                </div>
-                ${post.note ? `<div class="post-note">📝 ${post.note}</div>` : ''}
-                <button class="btn btn-primary" onclick="document.getElementById('modal-contact').classList.add('open')">Request Contact →</button>
-            `;
+            // BUG FIX: all user data escaped via esc() to prevent XSS
+            div.innerHTML =
+                '<div class="post-route">' +
+                  '<span class="city">' + esc(post.from) + '</span>' +
+                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;">' +
+                    '<div class="line"></div>' +
+                    '<div style="margin:0 6px;color:var(--muted);font-size:13px;">→</div>' +
+                    '<div class="line"></div>' +
+                  '</div>' +
+                  '<span class="city">' + esc(post.to) + '</span>' +
+                '</div>' +
+                '<div class="post-meta">' +
+                  '<span class="pill ' + pillClass + '">' + pillIcon + ' ' + esc(post.type) + '</span>' +
+                  (post.date ? '<span class="pill pill-gray">' + esc(post.date) + '</span>' : '') +
+                  (post.item ? '<span class="pill pill-gray">🛍️ ' + esc(post.item) + '</span>' : '') +
+                '</div>' +
+                '<div class="post-stats">' +
+                  '<div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">' + esc(post.kilo) + ' kg</div></div>' +
+                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span style="font-size:13px;color:var(--muted);">' + esc(post.currency) + '</span></div></div>' +
+                '</div>' +
+                (post.note ? '<div class="post-note">📝 ' + esc(post.note) + '</div>' : '') +
+                '<button class="btn btn-primary" onclick="document.getElementById(\'modal-contact\').classList.add(\'open\')">Request Contact →</button>';
             container.appendChild(div);
         });
     }
 
-    // Auto-fetch posts from Firebase
-    db.ref('posts').on('value', (snapshot) => {
+    // Live Firebase listener
+    db.ref('posts').on('value', function(snapshot) {
         allPosts = [];
-        snapshot.forEach(child => {
-            allPosts.push({ id: child.key, ...child.val() });
+        snapshot.forEach(function(child) {
+            allPosts.push(Object.assign({ id: child.key }, child.val()));
         });
         allPosts.reverse();
+        firebaseLoaded = true;
         renderPosts(allPosts);
     });
-
 </script>
 </body>
 </html>
