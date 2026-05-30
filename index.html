@@ -631,6 +631,7 @@
     }
 
     // ── Telegram Sending & Firebase Pushing ──
+// ── Telegram Sending & Firebase Pushing ──
     window.sendToTelegram = async function(type, btnElement) {
         if (type === 'Travel Offer' && !validateSell()) return;
         if (type === 'Cargo Request' && !validateBuy()) return;
@@ -639,7 +640,6 @@
         btnElement.disabled = true;
         btnElement.innerText = '⏳ Posting...';
 
-        // 🛠️ FIX 1 & 2: userId အမှန်ကို Database ထဲ အတူတူ ထည့်သိမ်းပါမယ်
         var postData = { 
             type: type, 
             user: myUserName, 
@@ -647,7 +647,9 @@
             timestamp: Date.now() 
         };
         
-        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + myUserName + '\n';
+        // Telegram က Markdown Error တက်လေ့ရှိလို့ အထူးသင်္ကေတတွေကို ဖယ်ရှားပါမယ်
+        var safeUserName = myUserName.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '');
+        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + safeUserName + '\n';
 
         if (type === 'Travel Offer') {
             postData.from     = document.getElementById('s-from').value.trim();
@@ -674,19 +676,29 @@
         }
         msg += '\n⚠️ *Contact Info is protected until approved by user.*';
 
-        var url = 'https://api.telegram.org/bot' + '8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU' + '/sendMessage?chat_id=' + '-1003928996991' + '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
+        var BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
+        var CHAT_ID = "-1003928996991";
+        var url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + CHAT_ID + '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
         try {
-            await db.ref('posts').push(postData);
-            
+            // ၁။ Telegram ဆီကို အရင်ဆုံး စာပို့ပါမယ် (ဒါမှ UI ကြီး ရပ်မသွားမှာပါ)
             let res = await fetch(url);
-            if (!res.ok) throw new Error('Telegram API responded with ' + res.status);
+            if (!res.ok) {
+                let errText = await res.text();
+                throw new Error(errText);
+            }
+
+            // ၂။ Firebase ကို နောက်ကွယ်ကနေ သိမ်းခိုင်းပါမယ် (await မခံထားလို့ ရပ်မစောင့်တော့ပါဘူး)
+            db.ref('posts').push(postData).catch(function(err) {
+                console.error('Firebase save error:', err);
+            });
 
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             showToast('✅ Posted! Your contact is hidden.');
 
+            // ဖောင်ရှင်းမယ်
             ['s-from','s-to','s-date','s-kilo','s-price','s-note',
              'b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
                 var el = document.getElementById(id); if (el) el.value = '';
@@ -694,7 +706,7 @@
             nav('screen-market');
         } catch (err) {
             console.error('Submission Error:', err);
-            showToast('❌ Post failed: ' + err.message, 5000);
+            showToast('❌ Post failed: ' + err.message, 6000);
         } finally {
             btnElement.disabled = false;
             btnElement.innerText = originalText;
