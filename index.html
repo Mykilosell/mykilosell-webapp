@@ -191,124 +191,96 @@
         setLang('en');
     </script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+ // 🔥 Firebase & Telegram Logic (Script အပိုင်းကို ဒီအတိုင်း ပြင်ပါ)
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-        // အစ်ကိုပေးထားသော Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
-            authDomain: "mykilosell-2d08d.firebaseapp.com",
-            projectId: "mykilosell-2d08d",
-            storageBucket: "mykilosell-2d08d.firebasestorage.app",
-            messagingSenderId: "771744850460",
-            appId: "1:771744850460:web:3b669b5d4c3ef6d64c75d9"
+    const firebaseConfig = {
+        apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
+        authDomain: "mykilosell-2d08d.firebaseapp.com",
+        projectId: "mykilosell-2d08d",
+        storageBucket: "mykilosell-2d08d.firebasestorage.app",
+        messagingSenderId: "771744850460",
+        appId: "1:771744850460:web:3b669b5d4c3ef6d64c75d9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ပို့စ်တင်သော လုပ်ဆောင်ချက်
+    window.submitPost = async function(type, btnElement) {
+        btnElement.disabled = true;
+        btnElement.innerText = "⏳ Posting...";
+
+        let postData = {
+            type: type,
+            user: tg.initDataUnsafe?.user?.first_name || "Guest",
+            timestamp: Date.now()
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Telegram Bot
-        const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
-        const CHAT_ID = "8655443147";
-
-        // ပို့စ်တင်သော လုပ်ဆောင်ချက်
-        window.submitPost = async function(type, btnElement) {
-            btnElement.disabled = true;
-            btnElement.innerText = "⏳ Posting...";
-
-            let userNameStr = tg.initDataUnsafe?.user?.first_name || "Guest";
-            let postData = {
-                type: type,
-                user: userNameStr,
-                timestamp: Date.now()
-            };
-
-            // Input Data ကောက်ယူခြင်း
-            if(type === 'Travel Offer') {
-                postData.from = document.getElementById('s-from').value;
-                postData.to = document.getElementById('s-to').value;
-                postData.date = document.getElementById('s-date').value;
-                postData.kilo = document.getElementById('s-kilo').value;
-                postData.price = document.getElementById('s-price').value;
-                postData.currency = document.getElementById('s-currency').value;
-                postData.note = document.getElementById('s-note').value;
-            } else {
-                postData.from = document.getElementById('b-from').value;
-                postData.to = document.getElementById('b-to').value;
-                postData.date = document.getElementById('b-date').value;
-                postData.kilo = document.getElementById('b-kilo').value;
-                postData.price = document.getElementById('b-price').value;
-                postData.currency = document.getElementById('b-currency').value;
-                postData.item = document.getElementById('b-item').value;
-            }
-
-            try {
-                // ၁။ Firebase သို့ ပို့စ်တင်ခြင်း
-                await push(ref(db, 'posts'), postData);
-
-                // ၂။ Telegram သို့ Noti ပို့ခြင်း
-                let msg = `🔒 *New ${type} (Contact Hidden)*\n👤 User: ${userNameStr}\n🛫 From: ${postData.from}\n🛬 To: ${postData.to}\n⚖️ Kilo: ${postData.kilo} Kg`;
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-                await fetch(url);
-
-                tg.HapticFeedback.notificationOccurred('success');
-                alert("Posted Successfully! It is now visible in the Marketplace.");
-                
-                // Clear form
-                document.querySelectorAll('input').forEach(i => i.type !== 'checkbox' && (i.value = ''));
-                nav('screen-market'); // အောင်မြင်ရင် Marketplace ဆီ တန်းသွားမယ်
-            } catch (error) {
-                console.error(error);
-                alert("Error! Please check your connection or Firebase Database Rules.");
-            } finally {
-                btnElement.disabled = false;
-                btnElement.innerText = "✅ Post " + (type === 'Travel Offer' ? "Travel" : "Request");
-            }
+        if(type === 'Travel Offer') {
+            postData.from = document.getElementById('s-from').value;
+            postData.to = document.getElementById('s-to').value;
+            postData.date = document.getElementById('s-date').value;
+            postData.kilo = document.getElementById('s-kilo').value;
+            postData.price = document.getElementById('s-price').value;
+            postData.currency = document.getElementById('s-currency').value;
+            postData.note = document.getElementById('s-note').value;
+        } else {
+            postData.from = document.getElementById('b-from').value;
+            postData.to = document.getElementById('b-to').value;
+            postData.date = document.getElementById('b-date').value;
+            postData.kilo = document.getElementById('b-kilo').value;
+            postData.price = document.getElementById('b-price').value;
+            postData.currency = document.getElementById('b-currency').value;
+            postData.item = document.getElementById('b-item').value;
         }
 
-        // Marketplace တွင် Firebase မှ ပို့စ်များကို အလိုအလျောက် ပြသခြင်း
-        const postsRef = ref(db, 'posts');
-        onValue(postsRef, (snapshot) => {
-            const container = document.getElementById('market-posts-container');
-            container.innerHTML = ''; // အဟောင်းတွေဖျက်
+        try {
+            await push(ref(db, 'posts'), postData); // Data သေချာဝင်အောင် 'posts' path သတ်မှတ်သည်
+            alert("Posted Successfully!");
+            nav('screen-market');
+        } catch (error) {
+            console.error(error);
+            alert("Post failed.");
+        } finally {
+            btnElement.disabled = false;
+            btnElement.innerText = "✅ Post " + (type === 'Travel Offer' ? "Travel" : "Request");
+        }
+    }
 
-            let postsList = [];
-            snapshot.forEach((child) => {
-                postsList.push({ id: child.key, ...child.val() });
-            });
+    // Marketplace တွင် Firebase မှ ပို့စ်များကို အလိုအလျောက် ပြသခြင်း
+    onValue(ref(db, 'posts'), (snapshot) => {
+        const container = document.getElementById('market-posts-container');
+        container.innerHTML = ''; 
+
+        if (!snapshot.exists()) {
+            container.innerHTML = '<p style="text-align:center; color:#aaa;">No posts yet.</p>';
+            return;
+        }
+
+        snapshot.forEach((childSnapshot) => {
+            let post = childSnapshot.val();
+            let isTravel = post.type === 'Travel Offer';
+            let icon = isTravel ? '✈️' : '📦';
             
-            postsList.reverse(); // အသစ်ဆုံးကို အပေါ်မှာထားမယ်
-
-            if(postsList.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#aaa;">No posts available yet.</p>';
-                return;
-            }
-
-            postsList.forEach(post => {
-                let isTravel = post.type === 'Travel Offer';
-                let badgeClass = isTravel ? 'badge-seller' : 'badge-buyer';
-                let icon = isTravel ? '✈️' : '📦';
-                
-                let html = `
-                <div class="post-card">
-                    <div class="post-header">
-                        <strong>${icon} ${post.from || '?'} ➡️ ${post.to || '?'}</strong>
-                        <span style="color:#aaa;">${post.date || ''}</span>
-                    </div>
-                    <p class="${badgeClass}">${post.type}</p>
-                    <p>Available: <strong>${post.kilo || 0} Kg</strong></p>
-                    <p>Price: <strong>${post.price || 0} ${post.currency || ''}</strong></p>
-                    ${post.item ? `<p>Item: <strong>${post.item}</strong></p>` : ''}
-                    ${post.note ? `<p style="font-size:13px; color:#aaa;">📝 ${post.note}</p>` : ''}
-                    <div class="post-actions">
-                        <button class="btn" style="flex:3; margin:0;" onclick="document.getElementById('modal-contact').style.display='flex'">📱 Request Contact</button>
-                    </div>
-                </div>`;
-                
-                container.innerHTML += html;
-            });
+            let html = `
+            <div class="post-card">
+                <div class="post-header">
+                    <strong>${icon} ${post.from} ➡️ ${post.to}</strong>
+                    <span style="color:#aaa;">${post.date || ''}</span>
+                </div>
+                <p>${post.type}</p>
+                <p>Available: <strong>${post.kilo} Kg</strong></p>
+                <p>Price: <strong>${post.price} ${post.currency}</strong></p>
+                <div class="post-actions">
+                    <button class="btn" style="flex:3; margin:0;" onclick="document.getElementById('modal-contact').style.display='flex'">📱 Request Contact</button>
+                </div>
+            </div>`;
+            container.innerHTML += html;
         });
-    </script>
+    });
+</script>
 </body>
 </html>
