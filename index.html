@@ -13,35 +13,17 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0d0f14;
-            --surface: #161a22;
-            --surface2: #1e2530;
-            --surface3: #252d3a;
-            --border: rgba(255,255,255,0.07);
-            --border2: rgba(255,255,255,0.13);
-            --text: #f0f2f5;
-            --muted: #7a8599;
-            --dimmed: #3d4659;
-            --accent: #3d7fff;
-            --accent-dim: rgba(61,127,255,0.12);
-            --gold: #f5b731;
-            --gold-dim: rgba(245,183,49,0.12);
-            --green: #34d47a;
-            --green-dim: rgba(52,212,122,0.12);
-            --red: #f04f4f;
-            --red-dim: rgba(240,79,79,0.1);
-            --radius: 14px;
-            --radius-sm: 8px;
+            --bg: #0d0f14; --surface: #161a22; --surface2: #1e2530; --surface3: #252d3a;
+            --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
+            --text: #f0f2f5; --muted: #7a8599; --dimmed: #3d4659;
+            --accent: #3d7fff; --accent-dim: rgba(61,127,255,0.12);
+            --gold: #f5b731; --gold-dim: rgba(245,183,49,0.12);
+            --green: #34d47a; --green-dim: rgba(52,212,122,0.12);
+            --red: #f04f4f; --red-dim: rgba(240,79,79,0.1);
+            --radius: 14px; --radius-sm: 8px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; min-height: 100vh; -webkit-font-smoothing: antialiased; }
         .screen { display: none; padding: 20px 16px 80px; max-width: 500px; margin: 0 auto; animation: rise 0.28s ease; }
         .screen.active { display: block; }
         @keyframes rise { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:translateY(0); } }
@@ -56,11 +38,7 @@
         .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:12px; }
         .form-group { margin-bottom:14px; }
         .form-label { display:block; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
-        input[type=text], input[type=number], input[type=date], input[type=tel], select, textarea {
-            width:100%; background:var(--surface2); border:1px solid var(--border2); color:var(--text);
-            border-radius:var(--radius-sm); padding:12px 14px; font-size:15px; font-family:'DM Sans',sans-serif;
-            outline:none; appearance:none; -webkit-appearance:none; transition:border-color 0.15s;
-        }
+        input[type=text], input[type=number], input[type=date], input[type=tel], select, textarea { width:100%; background:var(--surface2); border:1px solid var(--border2); color:var(--text); border-radius:var(--radius-sm); padding:12px 14px; font-size:15px; font-family:'DM Sans',sans-serif; outline:none; appearance:none; -webkit-appearance:none; transition:border-color 0.15s; }
         input:focus, select:focus, textarea:focus { border-color:var(--accent); }
         input.error { border-color: var(--red) !important; }
         select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8599' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; cursor:pointer; }
@@ -145,30 +123,14 @@
         ::-webkit-scrollbar-thumb { background:var(--dimmed); border-radius:4px; }
         .validation-msg { color:var(--red); font-size:12px; margin-bottom:12px; display:none; }
         .validation-msg.show { display:block; }
-
-        /* ── Fix 1: Toast notification ── */
-        #toast {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--surface); border: 1px solid var(--border2);
-            color: var(--text); padding: 12px 20px; border-radius: 50px;
-            font-size: 14px; font-family: 'DM Sans', sans-serif;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            z-index: 2000; white-space: nowrap;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-        #toast.show {
-            opacity: 1; transform: translateX(-50%) translateY(0);
-        }
+        #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface); border: 1px solid var(--border2); color: var(--text); padding: 12px 20px; border-radius: 50px; font-size: 14px; font-family: 'DM Sans', sans-serif; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 2000; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 <datalist id="cities"></datalist>
-
-<!-- Toast -->
 <div id="toast"></div>
 
-<!-- ONBOARD -->
 <div id="screen-onboard" class="screen active">
     <div class="logo-strip">
         <div class="logo-mark">
@@ -189,21 +151,21 @@
             <strong style="color:var(--text);">1. Platform Role</strong><br>
             MyKiloSell connects travelers and buyers. We do not participate in or oversee any shipping, handling, or delivery processes.<br><br>
             <strong style="color:var(--text);">2. Legal Compliance</strong><br>
-            Users are solely responsible for ensuring all items comply with international aviation security standards and national laws. We are strictly not liable for any lost, damaged, confiscated, or illegal items.<br><br>
+            Users are solely responsible for ensuring all items comply with international aviation security standards and national laws.<br><br>
             <strong style="color:var(--text);">3. Transactions</strong><br>
-            Financial transactions and agreements are made entirely between users. For safety, the use of trusted escrow services is strongly recommended.<br><br>
+            Financial transactions are made entirely between users.<br><br>
             <strong style="color:var(--text);">4. Privacy Protection</strong><br>
-            Contact information (Telegram handles and phone numbers) is protected and hidden by default. It will only be shared when a user explicitly accepts and approves a contact request.
+            Contact information is protected and hidden by default.
         </div>
         <div id="terms-mm" style="display:none; color:var(--muted);">
             <strong style="color:var(--text);">၁။ ပလက်ဖောင်း၏ အခန်းကဏ္ဍ</strong><br>
             MyKiloSell သည် ခရီးသွားများနှင့် ပစ္စည်းပို့လိုသူများကို ချိတ်ဆက်ပေးရုံသာ ဖြစ်ပါသည်။<br><br>
             <strong style="color:var(--text);">၂။ ဥပဒေနှင့် ကိုက်ညီမှု</strong><br>
-            သယ်ဆောင်မည့် ပစ္စည်းအားလုံးသည် အပြည်ပြည်ဆိုင်ရာ လေကြောင်းလုံခြုံရေး စံနှုန်းများနှင့် ကိုက်ညီမှုရှိစေရန် အသုံးပြုသူများတွင်သာ တာဝန်ရှိပါသည်။<br><br>
+            သယ်ဆောင်မည့် ပစ္စည်းအားလုံးသည် အပြည်ပြည်ဆိုင်ရာ လေကြောင်းလုံခြုံရေး စံနှုန်းများနှင့် ကိုက်ညီမှုရှိစေရန် သုံးစွဲသူတွင်သာ တာဝန်ရှိပါသည်။<br><br>
             <strong style="color:var(--text);">၃။ ငွေကြေးဆိုင်ရာ</strong><br>
-            ငွေကြေးလွှဲပြောင်းမှုများသည် အသုံးပြုသူအချင်းချင်း တိုက်ရိုက်လုပ်ဆောင်ရခြင်း ဖြစ်ပါသည်။<br><br>
-            <strong style="color:var(--text);">၄။ ကိုယ်ရေးအချက်အလက် ကာကွယ်မှု</strong><br>
-            အဆက်အသွယ်အချက်အလက်များကို ခွင့်ပြုချက် မပေးမချင်း လုံးဝဝှက်ထားပေးမည် ဖြစ်ပါသည်။
+            ငွေကြေးလွှဲပြောင်းမှုများသည် အသုံးပြုသူအချင်းချင်း တိုက်ရိုက်လုပ်ဆောင်ရမည် ဖြစ်ပါသည်။<br><br>
+            <strong style="color:var(--text);">၄။ ကိုယ်ရေးအချက်အလက်</strong><br>
+            အဆက်အသွယ်များကို ခွင့်ပြုချက် မပေးမချင်း လုံးဝဝှက်ထားပေးမည် ဖြစ်ပါသည်။
         </div>
     </div>
     <div class="agree-row">
@@ -215,7 +177,6 @@
     </button>
 </div>
 
-<!-- HUB -->
 <div id="screen-hub" class="screen">
     <div class="page-header" style="margin-bottom:20px;">
         <div class="label">Dashboard</div>
@@ -244,11 +205,8 @@
     </div>
 </div>
 
-<!-- SELL -->
 <div id="screen-sell" class="screen">
-    <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
-    </button>
+    <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Traveler</div><h1>Post Your Travel ✈️</h1></div>
     <div class="card">
         <div class="form-group"><label class="form-label">Leaving From</label><input type="text" id="s-from" list="cities" placeholder="e.g. Bangkok, Thailand"></div>
@@ -275,11 +233,8 @@
     <button class="btn btn-success" onclick="sendToTelegram('Travel Offer', this)">Post Travel →</button>
 </div>
 
-<!-- BUY -->
 <div id="screen-buy" class="screen">
-    <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
-    </button>
+    <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Cargo</div><h1>Post Cargo Request 📦</h1></div>
     <div class="card">
         <div class="form-group"><label class="form-label">Send From</label><input type="text" id="b-from" list="cities" placeholder="e.g. London, UK"></div>
@@ -306,11 +261,8 @@
     <button class="btn btn-gold" onclick="sendToTelegram('Cargo Request', this)">Post Request →</button>
 </div>
 
-<!-- MARKET -->
 <div id="screen-market" class="screen">
-    <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
-    </button>
+    <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Live Listings</div><h1 id="t-market-title">Marketplace 🌐</h1></div>
     <div class="filter-row">
         <input type="text" list="cities" placeholder="From…" id="f-from" oninput="filterPosts()">
@@ -321,40 +273,30 @@
     </div>
 </div>
 
-<!-- MY POSTS -->
-<!-- Fix 3: dynamic, loaded from Firebase -->
 <div id="screen-myposts" class="screen">
-    <button class="back-btn" onclick="nav('screen-hub')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
-    </button>
+    <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Manage</div><h1 id="t-manage-title">My Posts 📋</h1></div>
     <div id="myposts-container">
         <div class="loading-row"><div class="spinner"></div>Loading your posts…</div>
     </div>
 </div>
 
-<!-- MODAL: Contact -->
 <div id="modal-contact" class="modal-wrap">
     <div class="modal-box">
         <h3>Request Contact</h3>
         <p>A request will be sent via Telegram Bot. The traveler will be notified and can choose to share their contact with you.</p>
-        <button class="btn btn-success" onclick="
-            document.getElementById('modal-contact').classList.remove('open');
-            document.getElementById('modal-revealed').classList.add('open');
-            if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        ">Send Request ✓</button>
+        <button class="btn btn-success" onclick="document.getElementById('modal-contact').classList.remove('open'); document.getElementById('modal-revealed').classList.add('open'); if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');">Send Request ✓</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-contact').classList.remove('open')">Cancel</button>
     </div>
 </div>
 
-<!-- MODAL: Revealed -->
 <div id="modal-revealed" class="modal-wrap">
     <div class="modal-box">
         <h3>Contact Revealed ✅</h3>
         <p>The traveler accepted your request. Here are their details:</p>
         <div class="reveal-card">
             <div class="r-label">Traveler</div>
-            <div class="r-val" style="font-size:16px; margin-bottom:14px;">Aung · BKK ➡️ YGN</div>
+            <div class="r-val" style="font-size:16px; margin-bottom:14px;">Traveler</div>
             <div class="r-label">Phone Number</div>
             <div class="r-val">+66 123 456 789</div>
         </div>
@@ -363,7 +305,6 @@
     </div>
 </div>
 
-<!-- MODAL: Edit — Fix 2: stores currency, uses it in saveEdit -->
 <div id="modal-edit" class="modal-wrap">
     <div class="modal-box">
         <h3>Update Listing</h3>
@@ -406,17 +347,33 @@
     var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     if (tg && typeof tg.expand === 'function') tg.expand();
 
+    // ── User ID Setup (FIX 1 & 2) ──
+    // ရှင်းလင်းချက်: Telegram ထဲကနေသုံးရင် tg.initDataUnsafe.user.id ကို ယူပါမယ်။
+    // Browser ကနေသုံးရင် localStorage ကနေ guest_id တစ်ခုဖန်တီးပြီး သုံးပါမယ်။ 
+    var myUserId = 'guest_' + Date.now();
+    var myUserName = 'Guest User';
+    
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+        myUserId = String(tg.initDataUnsafe.user.id);
+        myUserName = tg.initDataUnsafe.user.first_name || 'User';
+    } else {
+        var localGuestId = localStorage.getItem('guestId');
+        if (!localGuestId) {
+            localGuestId = 'guest_' + Math.floor(Math.random() * 1000000);
+            localStorage.setItem('guestId', localGuestId);
+        }
+        myUserId = localGuestId;
+    }
+
     // ── State ──
     var currentKilo = 10;
     var allPosts = [];
-    var myPosts = [];           // Fix 3: user's own posts
     var firebaseLoaded = false;
     var currentLang = 'en';
-    var editingPostKey = null;  // Fix 2+3: which post is being edited
-    var editingPostCurrency = 'THB'; // Fix 2: track currency of post being edited
+    var editingPostKey = null;
 
-    var BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
-    var CHAT_ID = "8655443147";
+    var BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU"; 
+    var CHAT_ID = "-1003928996991"; 
 
     // ── Cities ──
     var dl = document.getElementById('cities');
@@ -449,7 +406,6 @@
         window.scrollTo(0, 0);
     }
 
-    // Fix 1: Toast instead of alert()
     var toastTimer = null;
     function showToast(msg, duration) {
         var toast = document.getElementById('toast');
@@ -520,7 +476,6 @@
         }
     }
 
-    // ── Kilo editor ──
     function updateKilo(v) {
         if (currentKilo + v >= 0) {
             currentKilo += v;
@@ -529,14 +484,11 @@
         }
     }
 
-    // Fix 2: saveEdit uses the currency from the modal select,
-    // and writes back to Firebase if we know the post key
     function saveEdit() {
         var p = document.getElementById('edit-price-val').value;
-        var c = document.getElementById('edit-currency-val').value; // Fix 2: read currency
+        var c = document.getElementById('edit-currency-val').value;
 
         if (editingPostKey) {
-            // Write the updated values back to Firebase
             db.ref('posts/' + editingPostKey).update({
                 kilo: String(currentKilo),
                 price: p,
@@ -548,18 +500,18 @@
                 showToast('❌ Update failed: ' + err.message);
             });
         }
-
         document.getElementById('modal-edit').classList.remove('open');
     }
 
-    // Fix 3: open edit modal pre-filled with the correct post's data
-    function openEditModal(post) {
+    function openEditModal(postId) {
+        var post = allPosts.find(function(p) { return p.id === postId; });
+        if (!post) return;
+
         editingPostKey = post.id;
         currentKilo = parseInt(post.kilo) || 0;
         document.getElementById('edit-kilo-val').innerText = currentKilo;
         document.getElementById('edit-price-val').value = post.price || '';
 
-        // Fix 2: pre-select the right currency
         var currSel = document.getElementById('edit-currency-val');
         for (var i = 0; i < currSel.options.length; i++) {
             if (currSel.options[i].value === post.currency) {
@@ -570,36 +522,57 @@
         document.getElementById('modal-edit').classList.add('open');
     }
 
-    // Fix 3: mark sold out writes to Firebase and re-renders
+    // ── FIX 3: Telegram Native Popup ──
     function markSoldOut(postKey) {
-        if (confirm("Mark this post as SOLD OUT?")) {
-            db.ref('posts/' + postKey).update({ soldOut: true }).then(function() {
-                showToast('🚫 Marked as sold out.');
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-            }).catch(function(err) {
-                showToast('❌ Failed: ' + err.message);
+        if (tg && tg.showPopup) {
+            // Telegram WebApp အတွက် Native Popup ပြခြင်း
+            tg.showPopup({
+                title: 'Mark as Sold Out',
+                message: 'Are you sure you want to mark this post as SOLD OUT?',
+                buttons: [
+                    { id: 'yes', type: 'destructive', text: 'Yes, Sold Out' },
+                    { id: 'no', type: 'cancel' }
+                ]
+            }, function(buttonId) {
+                if (buttonId === 'yes') {
+                    executeMarkSoldOut(postKey);
+                }
             });
+        } else {
+            // Browser မှာ Test လုပ်တဲ့အခါ သာမန် confirm ကို သုံးပါမယ်
+            if (confirm("Mark this post as SOLD OUT?")) {
+                executeMarkSoldOut(postKey);
+            }
         }
     }
 
-    // Fix 3: render the current user's posts dynamically from Firebase
+    function executeMarkSoldOut(postKey) {
+        db.ref('posts/' + postKey).update({ soldOut: true }).then(function() {
+            showToast('🚫 Marked as sold out.');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+        }).catch(function(err) {
+            showToast('❌ Failed: ' + err.message);
+        });
+    }
+
+    // ── My Posts Render (FIX 1 & 2) ──
     function renderMyPosts() {
         var container = document.getElementById('myposts-container');
         if (!container) return;
 
-        var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user)
-            ? tg.initDataUnsafe.user.first_name
-            : 'Guest User';
-
-        // Filter posts belonging to this user
-        var mine = allPosts.filter(function(p) { return p.user === userName; });
-
+        var mine = allPosts.filter(function(p) { 
+            // အရင်ကတင်ခဲ့တဲ့ ပို့စ်အဟောင်းတွေ (userId မပါသေးတဲ့ဟာတွေ) အတွက် Fallback ထည့်ပေးထားပါတယ်
+            if (p.userId) {
+                return p.userId === myUserId;
+            } else {
+                return p.user === myUserName;
+            }
+        });
+        
         container.innerHTML = '';
 
         if (mine.length === 0) {
-            container.innerHTML =
-                '<div class="empty"><div class="e-icon">📋</div>' +
-                '<p>You have no posts yet.<br>Post your travel or cargo need to get started.</p></div>';
+            container.innerHTML = '<div class="empty"><div class="e-icon">📋</div><p>You have no posts yet.</p></div>';
             return;
         }
 
@@ -613,15 +586,10 @@
             card.className = 'my-card';
             if (isSoldOut) card.style.opacity = '0.5';
 
-            // Fix 2: display the correct currency stored in the post
             card.innerHTML =
                 '<div class="post-route" style="margin-bottom:8px;">' +
                   '<span class="city">' + esc(post.from) + '</span>' +
-                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;">' +
-                    '<div class="line"></div>' +
-                    '<div style="margin:0 6px;color:var(--muted);">→</div>' +
-                    '<div class="line"></div>' +
-                  '</div>' +
+                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;"><div class="line"></div><div style="margin:0 6px;">→</div><div class="line"></div></div>' +
                   '<span class="city">' + esc(post.to) + '</span>' +
                 '</div>' +
                 '<div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
@@ -630,15 +598,12 @@
                 '</div>' +
                 '<div class="post-stats" style="margin-bottom:14px;">' +
                   '<div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">' + esc(post.kilo) + ' kg</div></div>' +
-                  // Fix 2: use post.currency not hardcoded THB
-                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span style="font-size:13px;color:var(--muted);">' + esc(post.currency) + '</span></div></div>' +
+                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span>' + esc(post.currency) + '</span></div></div>' +
                 '</div>' +
-                '<div id="actions-' + esc(post.id) + '">' +
-                  (isSoldOut
-                    ? '<div class="sold-badge">🚫 SOLD OUT</div>'
-                    : '<button class="btn btn-outline" style="margin-bottom:8px;" onclick=\'openEditModal(' + JSON.stringify(post) + ')\'>✏️ Edit Kilos & Price</button>' +
-                      '<button class="btn btn-danger" onclick=\'markSoldOut("' + esc(post.id) + '")\'>🚫 Mark as Sold Out</button>'
-                  ) +
+                '<div>' +
+                  (isSoldOut ? '<div class="sold-badge">🚫 SOLD OUT</div>' : 
+                    '<button class="btn btn-outline" style="margin-bottom:8px;" onclick="openEditModal(\'' + esc(post.id) + '\')">✏️ Edit Kilos & Price</button>' +
+                    '<button class="btn btn-danger" onclick="markSoldOut(\'' + esc(post.id) + '\')">🚫 Mark as Sold Out</button>') +
                 '</div>';
             container.appendChild(card);
         });
@@ -649,8 +614,7 @@
         var ok = true;
         ['s-from','s-to','s-date','s-kilo','s-price'].forEach(function(id) {
             var el = document.getElementById(id);
-            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
-            else el.classList.remove('error');
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
         });
         document.getElementById('sell-error').classList.toggle('show', !ok);
         return ok;
@@ -660,14 +624,13 @@
         var ok = true;
         ['b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
             var el = document.getElementById(id);
-            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
-            else el.classList.remove('error');
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
         });
         document.getElementById('buy-error').classList.toggle('show', !ok);
         return ok;
     }
 
-    // ── Post ──
+    // ── Telegram Sending & Firebase Pushing ──
     window.sendToTelegram = async function(type, btnElement) {
         if (type === 'Travel Offer' && !validateSell()) return;
         if (type === 'Cargo Request' && !validateBuy()) return;
@@ -676,11 +639,15 @@
         btnElement.disabled = true;
         btnElement.innerText = '⏳ Posting...';
 
-        var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user)
-            ? tg.initDataUnsafe.user.first_name : 'Guest User';
-
-        var postData = { type: type, user: userName, timestamp: Date.now() };
-        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + userName + '\n';
+        // 🛠️ FIX 1 & 2: userId အမှန်ကို Database ထဲ အတူတူ ထည့်သိမ်းပါမယ်
+        var postData = { 
+            type: type, 
+            user: myUserName, 
+            userId: myUserId, 
+            timestamp: Date.now() 
+        };
+        
+        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + myUserName + '\n';
 
         if (type === 'Travel Offer') {
             postData.from     = document.getElementById('s-from').value.trim();
@@ -690,9 +657,8 @@
             postData.price    = document.getElementById('s-price').value;
             postData.currency = document.getElementById('s-currency').value;
             postData.note     = document.getElementById('s-note').value.trim();
-            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
-                   '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo +
-                   ' Kg\n💰 Price: ' + postData.price + ' ' + postData.currency +
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to + '\n📅 Date: ' + postData.date +
+                   '\n⚖️ Kilo: ' + postData.kilo + ' Kg\n💰 Price: ' + postData.price + ' ' + postData.currency +
                    '\n📝 Note: ' + postData.note + '\n';
         } else {
             postData.from     = document.getElementById('b-from').value.trim();
@@ -702,47 +668,41 @@
             postData.price    = document.getElementById('b-price').value;
             postData.currency = document.getElementById('b-currency').value;
             postData.item     = document.getElementById('b-item').value.trim();
-            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
-                   '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo +
-                   ' Kg\n🛍️ Item: ' + postData.item +
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to + '\n📅 Date: ' + postData.date +
+                   '\n⚖️ Kilo: ' + postData.kilo + ' Kg\n🛍️ Item: ' + postData.item +
                    '\n💰 Price: ' + postData.price + ' ' + postData.currency + '\n';
         }
         msg += '\n⚠️ *Contact Info is protected until approved by user.*';
 
-        var url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + CHAT_ID +
-                  '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
+        var url = 'https://api.telegram.org/bot' + 8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU + '/sendMessage?chat_id=' + -1003928996991 + '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
         try {
             await db.ref('posts').push(postData);
-            await fetch(url);
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            let res = await fetch(url);
+            if (!res.ok) throw new Error('Telegram API responded with ' + res.status);
 
-            // Fix 1: toast instead of alert
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             showToast('✅ Posted! Your contact is hidden.');
 
             ['s-from','s-to','s-date','s-kilo','s-price','s-note',
              'b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
-                var el = document.getElementById(id);
-                if (el) el.value = '';
+                var el = document.getElementById(id); if (el) el.value = '';
             });
             nav('screen-market');
         } catch (err) {
-            console.error('Firebase/TG Error:', err);
-            // Fix 1: toast for errors too
-            showToast('❌ Post failed: ' + err.message, 4000);
+            console.error('Submission Error:', err);
+            showToast('❌ Post failed: ' + err.message, 5000);
         } finally {
             btnElement.disabled = false;
             btnElement.innerText = originalText;
         }
     };
 
-    // ── Marketplace ──
-    function filterPosts() {
-        if (!firebaseLoaded) return;
-        renderPosts(allPosts);
-    }
+    // ── Marketplace Render ──
+    function filterPosts() { if (firebaseLoaded) renderPosts(allPosts); }
 
     function renderPosts(posts) {
         var container = document.getElementById('market-posts-container');
@@ -758,7 +718,7 @@
 
         container.innerHTML = '';
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="empty"><div class="e-icon">✈️</div><p>No listings yet.<br>Be the first to post!</p></div>';
+            container.innerHTML = '<div class="empty"><div class="e-icon">✈️</div><p>No listings yet.</p></div>';
             return;
         }
 
@@ -772,9 +732,7 @@
             div.innerHTML =
                 '<div class="post-route">' +
                   '<span class="city">' + esc(post.from) + '</span>' +
-                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;">' +
-                    '<div class="line"></div><div style="margin:0 6px;color:var(--muted);font-size:13px;">→</div><div class="line"></div>' +
-                  '</div>' +
+                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;"><div class="line"></div><div style="margin:0 6px;font-size:13px;">→</div><div class="line"></div></div>' +
                   '<span class="city">' + esc(post.to) + '</span>' +
                 '</div>' +
                 '<div class="post-meta">' +
@@ -785,27 +743,22 @@
                 '</div>' +
                 '<div class="post-stats">' +
                   '<div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">' + esc(post.kilo) + ' kg</div></div>' +
-                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span style="font-size:13px;color:var(--muted);">' + esc(post.currency) + '</span></div></div>' +
+                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span>' + esc(post.currency) + '</span></div></div>' +
                 '</div>' +
                 (post.note ? '<div class="post-note">📝 ' + esc(post.note) + '</div>' : '') +
-                (!post.soldOut
-                    ? '<button class="btn btn-primary" onclick="document.getElementById(\'modal-contact\').classList.add(\'open\')">Request Contact →</button>'
-                    : '<button class="btn btn-outline" disabled>🚫 No Longer Available</button>'
-                );
+                (!post.soldOut ? '<button class="btn btn-primary" onclick="document.getElementById(\'modal-contact\').classList.add(\'open\')">Request Contact →</button>' : '<button class="btn btn-outline" disabled>🚫 No Longer Available</button>');
             container.appendChild(div);
         });
     }
 
-    // ── Firebase real-time listener ──
+    // ── Live listener ──
     db.ref('posts').on('value', function(snapshot) {
         allPosts = [];
-        snapshot.forEach(function(child) {
-            allPosts.push(Object.assign({ id: child.key }, child.val()));
-        });
+        snapshot.forEach(function(child) { allPosts.push(Object.assign({ id: child.key }, child.val())); });
         allPosts.reverse();
         firebaseLoaded = true;
         renderPosts(allPosts);
-        renderMyPosts(); // Fix 3: also refresh My Posts whenever data changes
+        renderMyPosts();
     });
 </script>
 </body>
