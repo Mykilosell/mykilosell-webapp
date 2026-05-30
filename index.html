@@ -12,7 +12,7 @@
         .active-screen { display: block; }
         .btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border: none; border-radius: 8px; background-color: var(--primary-btn); color: white; font-weight: bold; cursor: pointer; }
         .form-group { margin-bottom: 15px; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: var(--input-bg); color: white; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: var(--input-bg); color: white; box-sizing: border-box; }
         h2 { text-align: center; }
     </style>
 </head>
@@ -53,25 +53,31 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
         
+        // Navigation Function (အမှားကင်းအောင် အပေါ်မှာ ရေးထားပါသည်)
         function nav(screenId) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
         }
 
+        // Telegram Bot Settings
         const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
         const CHAT_ID = "8655443147";
 
         async function sendToTelegram(type) {
-            let msg = `🚀 *New Post: ${type}*\n👤 User: ${tg.initDataUnsafe.user?.first_name || "Guest"}\n`;
-            msg += `🛫 From: ${document.getElementById(type === 'Travel' ? 's-from' : 'b-from').value}\n`;
-            msg += `🛬 To: ${document.getElementById(type === 'Travel' ? 's-to' : 'b-to').value}\n`;
-            msg += `⚖️ Kilo: ${document.getElementById(type === 'Travel' ? 's-kilo' : 'b-kilo').value}`;
+            let user = tg.initDataUnsafe.user?.first_name || "Guest";
+            let msg = `🚀 *New ${type} Post*\n👤 User: ${user}\n`;
+            
+            if(type === 'Travel') {
+                msg += `🛫 From: ${document.getElementById('s-from').value}\n🛬 To: ${document.getElementById('s-to').value}\n⚖️ Kilo: ${document.getElementById('s-kilo').value}\n💰 Price: ${document.getElementById('s-price').value}`;
+            } else {
+                msg += `🛫 From: ${document.getElementById('b-from').value}\n🛬 To: ${document.getElementById('b-to').value}\n⚖️ Kilo: ${document.getElementById('b-kilo').value}`;
+            }
 
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
             try {
                 await fetch(url);
-                alert("Posted successfully!");
+                alert("Successfully posted!");
                 nav('screen-hub');
             } catch (e) { alert("Error sending post."); }
         }
