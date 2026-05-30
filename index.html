@@ -29,6 +29,8 @@
         .btn-danger { background-color: var(--danger-btn); }
         .btn-success { background-color: var(--success-btn); }
         .btn-outline { background-color: transparent; border: 2px solid var(--primary-btn); color: var(--primary-btn); }
+        .btn-lang { background-color: var(--input-bg); border: 2px solid var(--primary-btn); font-size: 20px; padding: 20px; transition: 0.2s; }
+        .btn-lang:active { background-color: var(--primary-btn); }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 14px; color: #bbb; }
         input, select, textarea {
@@ -61,32 +63,32 @@
 
     <datalist id="cities"></datalist>
 
-    <div id="screen-onboard" class="screen active-screen">
-        <h2>Welcome to MyKiloSell</h2>
-        <div class="form-group" style="margin-bottom: 20px;">
-            <select id="lang-select" onchange="setLang(this.value)">
-                <option value="en">🇬🇧 English</option>
-                <option value="mm">🇲🇲 မြန်မာဘာသာ</option>
-            </select>
+    <div id="screen-language" class="screen active-screen" style="text-align: center; padding-top: 40px;">
+        <h2>Choose Language<br><span style="font-size: 18px; color: #aaa; font-weight: normal; line-height: 1.8;">ဘာသာစကား ရွေးချယ်ပါ</span></h2>
+        <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 40px;">
+            <button class="btn btn-lang" onclick="chooseLang('en')">🇬🇧 English</button>
+            <button class="btn btn-lang" onclick="chooseLang('mm')">🇲🇲 မြန်မာဘာသာ</button>
         </div>
+    </div>
+
+    <div id="screen-terms" class="screen">
+        <h2 id="t-terms-title">Terms & Conditions</h2>
         
-        <h3 id="t-terms-title">Terms & Conditions</h3>
-        <div style="background:var(--input-bg); padding:15px; border-radius:8px; height:150px; overflow-y:auto; font-size:14px; line-height:1.6; margin-bottom:20px;" id="t-terms-text" onscroll="checkTermsScroll(this)">
-            
+        <div style="background:var(--input-bg); padding:15px; border-radius:8px; height:250px; overflow-y:auto; font-size:14px; line-height:1.6; margin-bottom:20px;" id="t-terms-text" onscroll="checkTermsScroll(this)">
             <div id="terms-en">
                 1. MyKiloSell connects travelers and buyers. We do not participate in or oversee any shipping, handling, or delivery processes.<br><br>
                 2. Users are solely responsible for ensuring that all items comply with international aviation security standards and national laws. We are strictly not liable for any lost, damaged, confiscated, or illegal items.<br><br>
                 3. Financial transactions and agreements are made entirely between users. For safety, the use of trusted escrow services is strongly recommended.<br><br>
                 4. Contact information (Telegram handles and phone numbers) is protected and hidden by default. It will only be shared when a user explicitly accepts and approves a contact request.
+                <br><br><br><i>(End of terms)</i>
             </div>
-            
             <div id="terms-mm" style="display:none;">
                 ၁။ MyKiloSell သည် ခရီးသွားများနှင့် ပစ္စည်းပို့လိုသူများကို ချိတ်ဆက်ပေးရုံသာ ဖြစ်ပါသည်။ ပစ္စည်းသယ်ယူပို့ဆောင်ခြင်း၊ ကိုင်တွယ်ခြင်း သို့မဟုတ် ပေးအပ်ခြင်း လုပ်ငန်းစဉ်များတွင် ကျွန်ုပ်တို့ လုံးဝပါဝင်ပတ်သက်ခြင်း မရှိပါ။<br><br>
                 ၂။ သယ်ဆောင်မည့် ပစ္စည်းအားလုံးသည် အပြည်ပြည်ဆိုင်ရာ လေကြောင်းလုံခြုံရေး စံနှုန်းများနှင့် သက်ဆိုင်ရာ နိုင်ငံများ၏ ဥပဒေများနှင့် ကိုက်ညီမှုရှိစေရန် အသုံးပြုသူများတွင်သာ တာဝန်အပြည့်ရှိပါသည်။ ပစ္စည်းပျောက်ဆုံးခြင်း၊ ပျက်စီးခြင်း၊ သိမ်းဆည်းခံရခြင်း သို့မဟုတ် တရားမဝင်ပစ္စည်းများ ဖြစ်ခြင်းတို့အတွက် ကျွန်ုပ်တို့တွင် လုံးဝတာဝန်မရှိပါ။<br><br>
                 ၃။ ငွေကြေးလွှဲပြောင်းမှုများနှင့် သဘောတူညီချက်များသည် အသုံးပြုသူအချင်းချင်း တိုက်ရိုက်လုပ်ဆောင်ရခြင်း ဖြစ်ပါသည်။ လုံခြုံစိတ်ချရမှုရှိစေရန် ခိုင်မာသော ကြားခံအာမခံစနစ် (Escrow Services) ကို အသုံးပြုရန် ပြင်းထန်စွာ အကြံပြုအပ်ပါသည်။<br><br>
                 ၄။ အသုံးပြုသူများ၏ အဆက်အသွယ်အချက်အလက်များ (Telegram handle နှင့် ဖုန်းနံပါတ်များ) ကို စနစ်မှ သီးသန့်ဝှက်ထားပေးမည် ဖြစ်ပြီး၊ အသုံးပြုသူဘက်မှ Request ကို ကိုယ်တိုင်လက်ခံပြီး ခွင့်ပြုချက် (Approve) ပေးမှသာ တစ်ဖက်လူဆီသို့ ပြသပေးမည် ဖြစ်ပါသည်။
+                <br><br><br><i>(စည်းကမ်းချက်များ အဆုံး)</i>
             </div>
-
         </div>
         
         <label style="display:flex; align-items:flex-start; gap:10px; margin-bottom:20px; color:#888;" id="agree-label">
@@ -95,6 +97,7 @@
         </label>
         
         <button class="btn btn-success" id="btn-start" disabled onclick="nav('screen-hub')">✅ <span id="t-btn-start">Continue</span></button>
+        <button class="btn btn-outline" onclick="nav('screen-language')" style="margin-top:10px;">⬅️ Back</button>
     </div>
 
     <div id="screen-hub" class="screen">
@@ -207,6 +210,7 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
         let currentKilo = 10;
+        let currentLang = 'en';
 
         // 🌍 မြို့စာရင်း
         const globalCities = [
@@ -237,22 +241,28 @@
             window.scrollTo(0, 0);
         }
 
-        // 📜 Scroll Logic for Disclaimer
+        // 🗣️ Language & Terms Logic
+        function chooseLang(lang) {
+            currentLang = lang;
+            tg.HapticFeedback.impactOccurred('medium');
+            setLang(lang);
+            
+            // ဘာသာစကားရွေးပြီးတာနဲ့ Terms Screen ကို ချက်ချင်းသွားမည်
+            nav('screen-terms');
+        }
+
         function checkTermsScroll(el) {
-            // အောက်ဆုံးရောက်မရောက် စစ်ဆေးခြင်း
             if (el.scrollHeight - Math.ceil(el.scrollTop) <= el.clientHeight + 5) {
                 let chk = document.getElementById('chk-agree');
                 if (chk.disabled) {
-                    chk.disabled = false; // Checkbox ကို ဖွင့်ပေးလိုက်မည်
-                    document.getElementById('agree-label').style.color = "#fff"; // အရောင်လင်းလာမည်
-                    let lang = document.getElementById('lang-select').value;
-                    document.getElementById('t-agree-text').innerText = dict[lang]['t-agree-text']; // စာသားပြောင်းမည်
+                    chk.disabled = false;
+                    document.getElementById('agree-label').style.color = "#fff";
+                    document.getElementById('t-agree-text').innerText = dict[currentLang]['t-agree-text'];
                     tg.HapticFeedback.impactOccurred('light');
                 }
             }
         }
 
-        // Dictionary
         const dict = {
             'en': {
                 't-terms-title': 'Terms & Conditions', 
@@ -275,7 +285,6 @@
         };
 
         function setLang(lang) {
-            // သာမန် စာသားများကို ပြောင်းရန်
             for (let id in dict[lang]) {
                 let el = document.getElementById(id);
                 if (el && id !== 't-agree-text' && id !== 't-scroll-msg') {
@@ -283,11 +292,9 @@
                 }
             }
             
-            // Terms and Conditions ပြောင်းရန်
             document.getElementById('terms-en').style.display = (lang === 'en') ? 'block' : 'none';
             document.getElementById('terms-mm').style.display = (lang === 'mm') ? 'block' : 'none';
             
-            // Checkbox Text ပြောင်းရန် (Scroll ဆွဲပြီး/မပြီး ပေါ်မူတည်၍)
             let chk = document.getElementById('chk-agree');
             if(chk.disabled) {
                 document.getElementById('t-agree-text').innerText = dict[lang]['t-scroll-msg'];
@@ -295,11 +302,8 @@
                 document.getElementById('t-agree-text').innerText = dict[lang]['t-agree-text'];
             }
         }
-        
-        // Initial Language Setup
-        setLang('en');
 
-        // Other generic functions
+        // Generic interactions
         function updateKilo(val) {
             if (currentKilo + val >= 0) {
                 currentKilo += val;
@@ -322,7 +326,7 @@
             }
         }
 
-        // 🌟 Telegram Bot သို့ ပို့ရန်
+        // 🌟 Telegram Bot (Contact Hidden)
         const BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
         const CHAT_ID = "8655443147";
 
