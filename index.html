@@ -6,7 +6,8 @@
     <title>MyKiloSell</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -121,7 +122,6 @@
         .my-card { background:var(--surface); border:1px solid var(--accent); border-radius:var(--radius); padding:18px; margin-bottom:14px; }
         .back-btn { display:inline-flex; align-items:center; gap:7px; color:var(--muted); font-size:14px; background:none; border:none; cursor:pointer; padding:0; margin-bottom:22px; -webkit-tap-highlight-color:transparent; }
         .back-btn svg { width:16px; height:16px; }
-        /* BUG FIX: display:flex must come AFTER display:none so .open can override */
         .modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; padding:16px; align-items:center; justify-content:center; }
         .modal-wrap.open { display:flex; }
         .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); width:100%; max-width:420px; padding:24px; animation:slideUp 0.25s ease; }
@@ -145,10 +145,28 @@
         ::-webkit-scrollbar-thumb { background:var(--dimmed); border-radius:4px; }
         .validation-msg { color:var(--red); font-size:12px; margin-bottom:12px; display:none; }
         .validation-msg.show { display:block; }
+
+        /* ── Fix 1: Toast notification ── */
+        #toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--surface); border: 1px solid var(--border2);
+            color: var(--text); padding: 12px 20px; border-radius: 50px;
+            font-size: 14px; font-family: 'DM Sans', sans-serif;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 2000; white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        #toast.show {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
 <datalist id="cities"></datalist>
+
+<!-- Toast -->
+<div id="toast"></div>
 
 <!-- ONBOARD -->
 <div id="screen-onboard" class="screen active">
@@ -304,30 +322,14 @@
 </div>
 
 <!-- MY POSTS -->
+<!-- Fix 3: dynamic, loaded from Firebase -->
 <div id="screen-myposts" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
     </button>
     <div class="page-header"><div class="label">Manage</div><h1 id="t-manage-title">My Posts 📋</h1></div>
-    <div class="my-card" id="my-post-card">
-        <div class="post-route" style="margin-bottom:8px;">
-            <span class="city">Bangkok</span>
-            <div style="margin:0 8px; display:flex; align-items:center; flex:1;"><div class="line"></div><div style="margin:0 6px; color:var(--muted);">→</div><div class="line"></div></div>
-            <span class="city">Yangon</span>
-        </div>
-        <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
-            <span class="pill pill-blue">✈️ Travel Offer</span>
-            <span class="pill pill-gray">30 May 2026</span>
-        </div>
-        <div class="post-stats" style="margin-bottom:14px;">
-            <div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val" id="disp-kilo">10 kg</div></div>
-            <div class="stat-cell"><div class="s-label">Price</div><div class="s-val" id="disp-price">40 THB</div></div>
-        </div>
-        <!-- BUG FIX: buttons wrapped in own div so markSoldOut only replaces this div, not the whole card -->
-        <div id="my-post-actions">
-            <button class="btn btn-outline" style="margin-bottom:8px;" onclick="document.getElementById('modal-edit').classList.add('open')">✏️ Edit Kilos & Price</button>
-            <button class="btn btn-danger" onclick="markSoldOut(this)">🚫 Mark as Sold Out</button>
-        </div>
+    <div id="myposts-container">
+        <div class="loading-row"><div class="spinner"></div>Loading your posts…</div>
     </div>
 </div>
 
@@ -361,7 +363,7 @@
     </div>
 </div>
 
-<!-- MODAL: Edit -->
+<!-- MODAL: Edit — Fix 2: stores currency, uses it in saveEdit -->
 <div id="modal-edit" class="modal-wrap">
     <div class="modal-box">
         <h3>Update Listing</h3>
@@ -376,16 +378,19 @@
             <label class="form-label">Price Per Kilo</label>
             <input type="number" id="edit-price-val" value="40" min="0">
         </div>
+        <div class="form-group">
+            <label class="form-label">Currency</label>
+            <select id="edit-currency-val">
+                <option>THB</option><option>MMK</option><option>USD</option><option>SGD</option>
+            </select>
+        </div>
         <button class="btn btn-success" onclick="saveEdit()">Save Changes</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-edit').classList.remove('open')">Cancel</button>
     </div>
 </div>
 
-<script type="module">
-    // Firebase v9 Modular SDK ကို သုံးပါမယ်
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
+<script>
+    // ── Firebase ──
     const firebaseConfig = {
         apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
         authDomain: "mykilosell-2d08d.firebaseapp.com",
@@ -394,31 +399,414 @@
         messagingSenderId: "771744850460",
         appId: "1:771744850460:web:3b669b5d4c3ef6d64c75d9"
     };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    // ── Telegram ──
+    var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+    if (tg && typeof tg.expand === 'function') tg.expand();
 
-    // Telegram & Logic တွေအကုန်လုံးကို ဒီ Module ထဲမှာပဲ ထည့်ရေးပါ
-    let tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-    if (tg) tg.expand();
+    // ── State ──
+    var currentKilo = 10;
+    var allPosts = [];
+    var myPosts = [];           // Fix 3: user's own posts
+    var firebaseLoaded = false;
+    var currentLang = 'en';
+    var editingPostKey = null;  // Fix 2+3: which post is being edited
+    var editingPostCurrency = 'THB'; // Fix 2: track currency of post being edited
 
-    // Data ဖတ်ခြင်း
-    onValue(ref(db, 'posts'), (snapshot) => {
+    var BOT_TOKEN = "8655443147:AAFao2tmUpPUDpJxQcI5a8JZfvhzemHCoFU";
+    var CHAT_ID = "8655443147";
+
+    // ── Cities ──
+    var dl = document.getElementById('cities');
+    var citiesList = [
+        "Bangkok, Thailand","Chiang Mai, Thailand","Phuket, Thailand","Mae Sot, Thailand",
+        "Yangon, Myanmar","Mandalay, Myanmar","Naypyidaw, Myanmar","Tachileik, Myanmar",
+        "Singapore, Singapore","Kuala Lumpur, Malaysia","Penang, Malaysia",
+        "Tokyo, Japan","Osaka, Japan","Seoul, South Korea","Busan, South Korea",
+        "London, UK","Manchester, UK","Dubai, UAE","Abu Dhabi, UAE",
+        "Taipei, Taiwan","Hong Kong","Macau","Beijing, China","Guangzhou, China","Ruili, China",
+        "New York, USA","Los Angeles, USA","San Francisco, USA",
+        "Sydney, Australia","Melbourne, Australia","Ho Chi Minh, Vietnam","Hanoi, Vietnam",
+        "Manila, Philippines","Jakarta, Indonesia","New Delhi, India"
+    ];
+    citiesList.forEach(function(c) {
+        var o = document.createElement('option'); o.value = c;
+        if (dl) dl.appendChild(o);
+    });
+
+    // ── Helpers ──
+    function esc(str) {
+        return String(str || '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function nav(id) {
+        document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // Fix 1: Toast instead of alert()
+    var toastTimer = null;
+    function showToast(msg, duration) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() {
+            toast.classList.remove('show');
+        }, duration || 3000);
+    }
+
+    // ── i18n ──
+    var dict = {
+        en: {
+            't-agree-text': 'I have read and agree to the terms.',
+            't-scroll-msg': 'Scroll to the end to enable.',
+            't-hub-title': "What's the move?",
+            't-btn-hub-sell': 'Post Your Travel', 't-hub-sell-sub': 'Sell spare luggage kilos to earn on your trip',
+            't-btn-hub-buy': 'Post Cargo Need', 't-hub-buy-sub': 'Find a traveler to carry your package',
+            't-btn-hub-market': 'Marketplace', 't-hub-market-sub': 'Browse live traveler & cargo listings',
+            't-btn-hub-manage': 'My Posts', 't-hub-manage-sub': 'Edit kilos, price, or mark sold out',
+            't-market-title': 'Marketplace 🌐', 't-manage-title': 'My Posts 📋',
+            't-terms-label': 'Terms & Conditions', 't-terms-title': 'Read before you fly.', 't-btn-start': 'Continue →'
+        },
+        mm: {
+            't-agree-text': 'စည်းကမ်းချက်များကို ဖတ်ရှုပြီး သဘောတူပါသည်။',
+            't-scroll-msg': 'သဘောတူရန် အောက်ဆုံးအထိ ဆွဲဖတ်ပေးပါ။',
+            't-hub-title': 'မည်သည့်လုပ်ဆောင်ချက်ကို ပြုလုပ်မည်?',
+            't-btn-hub-sell': 'ခရီးစဉ်အသစ်တင်ရန်', 't-hub-sell-sub': 'ကျန်ရှိသော ကီလိုများကို ရောင်းချပါ',
+            't-btn-hub-buy': 'ပစ္စည်းပို့ရန် တောင်းဆိုမည်', 't-hub-buy-sub': 'သင့်ပစ္စည်းကို သယ်ဆောင်မည့် ခရီးသွားရှာပါ',
+            't-btn-hub-market': 'ပင်မဈေးကွက်', 't-hub-market-sub': 'ကြော်ငြာများကို ကြည့်ရှုပါ',
+            't-btn-hub-manage': 'မိမိ၏ ခရီးစဉ်များ', 't-hub-manage-sub': 'ကီလို၊ ဈေးနှုန်း ပြင်ဆင်ရန်',
+            't-market-title': 'ပင်မဈေးကွက် 🌐', 't-manage-title': 'မိမိ၏ ကြော်ငြာများ 📋',
+            't-terms-label': 'စည်းကမ်းချက်များ', 't-terms-title': 'ဖတ်ပြီးမှ ဆက်လက်လုပ်ဆောင်ပါ။', 't-btn-start': 'ရှေ့ဆက်မည် →'
+        }
+    };
+
+    function setLang(lang) {
+        currentLang = lang;
+        var d = dict[lang];
+        for (var id in d) { var el = document.getElementById(id); if (el) el.innerText = d[id]; }
+        document.getElementById('terms-en').style.display = lang === 'en' ? 'block' : 'none';
+        document.getElementById('terms-mm').style.display = lang === 'mm' ? 'block' : 'none';
+        var chk = document.getElementById('chk-agree');
+        if (chk) {
+            document.getElementById('t-agree-text').innerText = chk.disabled ? d['t-scroll-msg'] : d['t-agree-text'];
+            chk.disabled = true;
+            chk.checked = false;
+        }
+        document.getElementById('terms-scroll').scrollTop = 0;
+        document.getElementById('btn-start').disabled = true;
+    }
+    setLang('en');
+
+    function langPill(btn) {
+        document.querySelectorAll('.lang-pill button').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+    }
+
+    function checkScroll(el) {
+        if (el.scrollHeight - Math.ceil(el.scrollTop) <= el.clientHeight + 5) {
+            var chk = document.getElementById('chk-agree');
+            if (chk.disabled) {
+                chk.disabled = false;
+                document.getElementById('t-agree-text').innerText = dict[currentLang]['t-agree-text'];
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+    }
+
+    // ── Kilo editor ──
+    function updateKilo(v) {
+        if (currentKilo + v >= 0) {
+            currentKilo += v;
+            document.getElementById('edit-kilo-val').innerText = currentKilo;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+    }
+
+    // Fix 2: saveEdit uses the currency from the modal select,
+    // and writes back to Firebase if we know the post key
+    function saveEdit() {
+        var p = document.getElementById('edit-price-val').value;
+        var c = document.getElementById('edit-currency-val').value; // Fix 2: read currency
+
+        if (editingPostKey) {
+            // Write the updated values back to Firebase
+            db.ref('posts/' + editingPostKey).update({
+                kilo: String(currentKilo),
+                price: p,
+                currency: c
+            }).then(function() {
+                showToast('✅ Post updated!');
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }).catch(function(err) {
+                showToast('❌ Update failed: ' + err.message);
+            });
+        }
+
+        document.getElementById('modal-edit').classList.remove('open');
+    }
+
+    // Fix 3: open edit modal pre-filled with the correct post's data
+    function openEditModal(post) {
+        editingPostKey = post.id;
+        currentKilo = parseInt(post.kilo) || 0;
+        document.getElementById('edit-kilo-val').innerText = currentKilo;
+        document.getElementById('edit-price-val').value = post.price || '';
+
+        // Fix 2: pre-select the right currency
+        var currSel = document.getElementById('edit-currency-val');
+        for (var i = 0; i < currSel.options.length; i++) {
+            if (currSel.options[i].value === post.currency) {
+                currSel.selectedIndex = i;
+                break;
+            }
+        }
+        document.getElementById('modal-edit').classList.add('open');
+    }
+
+    // Fix 3: mark sold out writes to Firebase and re-renders
+    function markSoldOut(postKey) {
+        if (confirm("Mark this post as SOLD OUT?")) {
+            db.ref('posts/' + postKey).update({ soldOut: true }).then(function() {
+                showToast('🚫 Marked as sold out.');
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+            }).catch(function(err) {
+                showToast('❌ Failed: ' + err.message);
+            });
+        }
+    }
+
+    // Fix 3: render the current user's posts dynamically from Firebase
+    function renderMyPosts() {
+        var container = document.getElementById('myposts-container');
+        if (!container) return;
+
+        var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user)
+            ? tg.initDataUnsafe.user.first_name
+            : 'Guest User';
+
+        // Filter posts belonging to this user
+        var mine = allPosts.filter(function(p) { return p.user === userName; });
+
+        container.innerHTML = '';
+
+        if (mine.length === 0) {
+            container.innerHTML =
+                '<div class="empty"><div class="e-icon">📋</div>' +
+                '<p>You have no posts yet.<br>Post your travel or cargo need to get started.</p></div>';
+            return;
+        }
+
+        mine.forEach(function(post) {
+            var isTravel  = post.type === 'Travel Offer';
+            var pillClass = isTravel ? 'pill-blue' : 'pill-gold';
+            var pillIcon  = isTravel ? '✈️' : '📦';
+            var isSoldOut = !!post.soldOut;
+
+            var card = document.createElement('div');
+            card.className = 'my-card';
+            if (isSoldOut) card.style.opacity = '0.5';
+
+            // Fix 2: display the correct currency stored in the post
+            card.innerHTML =
+                '<div class="post-route" style="margin-bottom:8px;">' +
+                  '<span class="city">' + esc(post.from) + '</span>' +
+                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;">' +
+                    '<div class="line"></div>' +
+                    '<div style="margin:0 6px;color:var(--muted);">→</div>' +
+                    '<div class="line"></div>' +
+                  '</div>' +
+                  '<span class="city">' + esc(post.to) + '</span>' +
+                '</div>' +
+                '<div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
+                  '<span class="pill ' + pillClass + '">' + pillIcon + ' ' + esc(post.type) + '</span>' +
+                  (post.date ? '<span class="pill pill-gray">' + esc(post.date) + '</span>' : '') +
+                '</div>' +
+                '<div class="post-stats" style="margin-bottom:14px;">' +
+                  '<div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">' + esc(post.kilo) + ' kg</div></div>' +
+                  // Fix 2: use post.currency not hardcoded THB
+                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span style="font-size:13px;color:var(--muted);">' + esc(post.currency) + '</span></div></div>' +
+                '</div>' +
+                '<div id="actions-' + esc(post.id) + '">' +
+                  (isSoldOut
+                    ? '<div class="sold-badge">🚫 SOLD OUT</div>'
+                    : '<button class="btn btn-outline" style="margin-bottom:8px;" onclick=\'openEditModal(' + JSON.stringify(post) + ')\'>✏️ Edit Kilos & Price</button>' +
+                      '<button class="btn btn-danger" onclick=\'markSoldOut("' + esc(post.id) + '")\'>🚫 Mark as Sold Out</button>'
+                  ) +
+                '</div>';
+            container.appendChild(card);
+        });
+    }
+
+    // ── Validation ──
+    function validateSell() {
+        var ok = true;
+        ['s-from','s-to','s-date','s-kilo','s-price'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+            else el.classList.remove('error');
+        });
+        document.getElementById('sell-error').classList.toggle('show', !ok);
+        return ok;
+    }
+
+    function validateBuy() {
+        var ok = true;
+        ['b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+            else el.classList.remove('error');
+        });
+        document.getElementById('buy-error').classList.toggle('show', !ok);
+        return ok;
+    }
+
+    // ── Post ──
+    window.sendToTelegram = async function(type, btnElement) {
+        if (type === 'Travel Offer' && !validateSell()) return;
+        if (type === 'Cargo Request' && !validateBuy()) return;
+
+        var originalText = btnElement.innerText;
+        btnElement.disabled = true;
+        btnElement.innerText = '⏳ Posting...';
+
+        var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user)
+            ? tg.initDataUnsafe.user.first_name : 'Guest User';
+
+        var postData = { type: type, user: userName, timestamp: Date.now() };
+        var msg = '🔒 *New ' + type + ' (Contact Hidden)*\n👤 User: ' + userName + '\n';
+
+        if (type === 'Travel Offer') {
+            postData.from     = document.getElementById('s-from').value.trim();
+            postData.to       = document.getElementById('s-to').value.trim();
+            postData.date     = document.getElementById('s-date').value;
+            postData.kilo     = document.getElementById('s-kilo').value;
+            postData.price    = document.getElementById('s-price').value;
+            postData.currency = document.getElementById('s-currency').value;
+            postData.note     = document.getElementById('s-note').value.trim();
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
+                   '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo +
+                   ' Kg\n💰 Price: ' + postData.price + ' ' + postData.currency +
+                   '\n📝 Note: ' + postData.note + '\n';
+        } else {
+            postData.from     = document.getElementById('b-from').value.trim();
+            postData.to       = document.getElementById('b-to').value.trim();
+            postData.date     = document.getElementById('b-date').value;
+            postData.kilo     = document.getElementById('b-kilo').value;
+            postData.price    = document.getElementById('b-price').value;
+            postData.currency = document.getElementById('b-currency').value;
+            postData.item     = document.getElementById('b-item').value.trim();
+            msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
+                   '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo +
+                   ' Kg\n🛍️ Item: ' + postData.item +
+                   '\n💰 Price: ' + postData.price + ' ' + postData.currency + '\n';
+        }
+        msg += '\n⚠️ *Contact Info is protected until approved by user.*';
+
+        var url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + CHAT_ID +
+                  '&text=' + encodeURIComponent(msg) + '&parse_mode=Markdown';
+
+        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
+        try {
+            await db.ref('posts').push(postData);
+            await fetch(url);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+            // Fix 1: toast instead of alert
+            showToast('✅ Posted! Your contact is hidden.');
+
+            ['s-from','s-to','s-date','s-kilo','s-price','s-note',
+             'b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            nav('screen-market');
+        } catch (err) {
+            console.error('Firebase/TG Error:', err);
+            // Fix 1: toast for errors too
+            showToast('❌ Post failed: ' + err.message, 4000);
+        } finally {
+            btnElement.disabled = false;
+            btnElement.innerText = originalText;
+        }
+    };
+
+    // ── Marketplace ──
+    function filterPosts() {
+        if (!firebaseLoaded) return;
+        renderPosts(allPosts);
+    }
+
+    function renderPosts(posts) {
+        var container = document.getElementById('market-posts-container');
+        if (!container) return;
+
+        var fFrom = (document.getElementById('f-from').value || '').toLowerCase();
+        var fTo   = (document.getElementById('f-to').value   || '').toLowerCase();
+
+        var filtered = posts.filter(function(p) {
+            return (!fFrom || (p.from || '').toLowerCase().includes(fFrom)) &&
+                   (!fTo   || (p.to   || '').toLowerCase().includes(fTo));
+        });
+
+        container.innerHTML = '';
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty"><div class="e-icon">✈️</div><p>No listings yet.<br>Be the first to post!</p></div>';
+            return;
+        }
+
+        filtered.forEach(function(post) {
+            var isTravel  = post.type === 'Travel Offer';
+            var pillClass = isTravel ? 'pill-blue' : 'pill-gold';
+            var pillIcon  = isTravel ? '✈️' : '📦';
+            var div = document.createElement('div');
+            div.className = 'post-card';
+            if (post.soldOut) div.style.opacity = '0.5';
+            div.innerHTML =
+                '<div class="post-route">' +
+                  '<span class="city">' + esc(post.from) + '</span>' +
+                  '<div style="margin:0 8px;display:flex;align-items:center;flex:1;">' +
+                    '<div class="line"></div><div style="margin:0 6px;color:var(--muted);font-size:13px;">→</div><div class="line"></div>' +
+                  '</div>' +
+                  '<span class="city">' + esc(post.to) + '</span>' +
+                '</div>' +
+                '<div class="post-meta">' +
+                  '<span class="pill ' + pillClass + '">' + pillIcon + ' ' + esc(post.type) + '</span>' +
+                  (post.date ? '<span class="pill pill-gray">' + esc(post.date) + '</span>' : '') +
+                  (post.item ? '<span class="pill pill-gray">🛍️ ' + esc(post.item) + '</span>' : '') +
+                  (post.soldOut ? '<span class="pill" style="background:var(--red-dim);color:var(--red);border:1px solid rgba(240,79,79,0.25);">🚫 Sold Out</span>' : '') +
+                '</div>' +
+                '<div class="post-stats">' +
+                  '<div class="stat-cell"><div class="s-label">Kilos</div><div class="s-val">' + esc(post.kilo) + ' kg</div></div>' +
+                  '<div class="stat-cell"><div class="s-label">Price / kg</div><div class="s-val">' + esc(post.price) + ' <span style="font-size:13px;color:var(--muted);">' + esc(post.currency) + '</span></div></div>' +
+                '</div>' +
+                (post.note ? '<div class="post-note">📝 ' + esc(post.note) + '</div>' : '') +
+                (!post.soldOut
+                    ? '<button class="btn btn-primary" onclick="document.getElementById(\'modal-contact\').classList.add(\'open\')">Request Contact →</button>'
+                    : '<button class="btn btn-outline" disabled>🚫 No Longer Available</button>'
+                );
+            container.appendChild(div);
+        });
+    }
+
+    // ── Firebase real-time listener ──
+    db.ref('posts').on('value', function(snapshot) {
         allPosts = [];
-        snapshot.forEach((child) => {
-            allPosts.push({ id: child.key, ...child.val() });
+        snapshot.forEach(function(child) {
+            allPosts.push(Object.assign({ id: child.key }, child.val()));
         });
         allPosts.reverse();
         firebaseLoaded = true;
         renderPosts(allPosts);
+        renderMyPosts(); // Fix 3: also refresh My Posts whenever data changes
     });
-
-    // Telegram ပို့ခြင်း (v9 style)
-    window.sendToTelegram = async function(type, btnElement) {
-        // ... (Validate လုပ်ပြီး push လုပ်တဲ့နေရာ) ...
-        await push(ref(db, 'posts'), postData);
-        // ...
-    }
 </script>
 </body>
 </html>
