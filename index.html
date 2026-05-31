@@ -695,7 +695,7 @@
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-        // 👇 အစ်ကို့ရဲ့ URL ကို ကျွန်တော် အသေ ထည့်ပေးလိုက်ပါပြီ
+        // 👇 အစ်ကို့ရဲ့ Link ကို အသေထည့်ပေးထားပါသည်
         var BACKEND_URL = "https://script.google.com/macros/s/AKfycbzQWpeHeTqRjdZj-gxc9rcpo8kX4pVAYeiFVd-wwelgTstfX4dCI-hfD9CgwgVFM06r/exec"; 
 
         var fetchUrl = BACKEND_URL + "?text=" + encodeURIComponent(msg);
@@ -731,6 +731,7 @@
                 btnElement.innerText = originalText;
             });
     };
+
     // ── Live Listener ──
     db.ref('posts').on('value', function(snapshot) {
         allPosts = [];
