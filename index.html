@@ -695,17 +695,8 @@
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-        // 👇👇👇 အလွန်အရေးကြီးပါသည် 👇👇👇
-        // အောက်ပါ နေရာတွင် အစ်ကို ဖန်တီးထားသော Google Apps Script Web App URL အရှည်ကြီးကို ထည့်ပါ။
-        // ဥပမာ - "https://script.google.com/macros/s/AKfyc.../exec"
-        var BACKEND_URL = "ဒီနေရာမှာ_အစ်ကို့ရဲ့_Google_Script_URL_ထည့်ပါ"; 
-
-        if (BACKEND_URL.includes("ဒီနေရာမှာ")) {
-            alert("https://script.google.com/macros/s/AKfycbwUw5dqzlwz3TUr6K1T3lCdzYhkWy7ZVNuSi5lnBqRgiiPLvAfA7PGFGhTvGrMNZJDFMQ/exec");
-            btnElement.disabled = false;
-            btnElement.innerText = originalText;
-            return;
-        }
+        // 👇 အစ်ကို့ရဲ့ URL ကို ကျွန်တော် အသေ ထည့်ပေးလိုက်ပါပြီ
+        var BACKEND_URL = "https://script.google.com/macros/s/AKfycbwUw5dqzlwz3TUr6K1T3lCdzYhkWy7ZVNusi5InBqRgiiPLvAfA7PGFGhTvGrMNZJDFMQ/exec"; 
 
         var fetchUrl = BACKEND_URL + "?text=" + encodeURIComponent(msg);
         var controller = new AbortController();
@@ -740,7 +731,6 @@
                 btnElement.innerText = originalText;
             });
     };
-
     // ── Live Listener ──
     db.ref('posts').on('value', function(snapshot) {
         allPosts = [];
