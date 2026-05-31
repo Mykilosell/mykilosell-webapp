@@ -80,7 +80,7 @@
         .lang-pill button { flex:1; padding:8px; border:none; background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:14px; border-radius:40px; cursor:pointer; transition:all 0.15s; }
         .lang-pill button.active { background:var(--accent); color:white; font-weight:500; }
         .contact-block { background:var(--green-dim); border:1px solid rgba(52,212,122,0.2); border-radius:var(--radius-sm); padding:14px; margin-bottom:14px; }
-        .contact-block input { background:var(--surface); color:var(--muted); border-color:var(--border); }
+        .contact-block input { background:var(--surface); color:var(--text); border-color:var(--border); }
         .contact-block .lock-note { font-size:11px; color:var(--green); margin-top:8px; display:flex; align-items:center; gap:5px; }
         .post-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
         .post-route { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
@@ -131,7 +131,6 @@
 <datalist id="cities"></datalist>
 <div id="toast"></div>
 
-<!-- ONBOARD -->
 <div id="screen-onboard" class="screen active">
     <div class="logo-strip">
         <div class="logo-mark">
@@ -178,7 +177,6 @@
     </button>
 </div>
 
-<!-- HUB -->
 <div id="screen-hub" class="screen">
     <div class="page-header" style="margin-bottom:20px;">
         <div class="label">Dashboard</div>
@@ -207,7 +205,6 @@
     </div>
 </div>
 
-<!-- SELL -->
 <div id="screen-sell" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Traveler</div><h1>Post Your Travel ✈️</h1></div>
@@ -229,14 +226,13 @@
     </div>
     <div class="contact-block">
         <div class="form-label">Protected Contact</div>
-        <input type="tel" id="s-contact" value="+66 123 456 789" readonly>
+        <input type="text" id="s-contact" placeholder="e.g. +66 123... or @username">
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
-    <p class="validation-msg" id="sell-error">⚠️ Please fill in From, To, Date, Kilos, and Price.</p>
+    <p class="validation-msg" id="sell-error">⚠️ Please fill in all fields including Contact.</p>
     <button class="btn btn-success" onclick="sendPost('Travel Offer', this)">Post Travel →</button>
 </div>
 
-<!-- BUY -->
 <div id="screen-buy" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Cargo</div><h1>Post Cargo Request 📦</h1></div>
@@ -258,14 +254,13 @@
     </div>
     <div class="contact-block">
         <div class="form-label">Protected Contact</div>
-        <input type="tel" id="b-contact" value="+66 123 456 789" readonly>
+        <input type="text" id="b-contact" placeholder="e.g. +66 123... or @username">
         <div class="lock-note">🔒 Hidden until you approve contact requests</div>
     </div>
-    <p class="validation-msg" id="buy-error">⚠️ Please fill in From, To, Date, Item, Kilos, and Price.</p>
+    <p class="validation-msg" id="buy-error">⚠️ Please fill in all fields including Contact.</p>
     <button class="btn btn-gold" onclick="sendPost('Cargo Request', this)">Post Request →</button>
 </div>
 
-<!-- MARKET -->
 <div id="screen-market" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Live Listings</div><h1 id="t-market-title">Marketplace 🌐</h1></div>
@@ -278,7 +273,6 @@
     </div>
 </div>
 
-<!-- MY POSTS -->
 <div id="screen-myposts" class="screen">
     <button class="back-btn" onclick="nav('screen-hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
     <div class="page-header"><div class="label">Manage</div><h1 id="t-manage-title">My Posts 📋</h1></div>
@@ -287,7 +281,6 @@
     </div>
 </div>
 
-<!-- MODAL: Contact -->
 <div id="modal-contact" class="modal-wrap">
     <div class="modal-box">
         <h3>Request Contact</h3>
@@ -297,7 +290,6 @@
     </div>
 </div>
 
-<!-- MODAL: Revealed -->
 <div id="modal-revealed" class="modal-wrap">
     <div class="modal-box">
         <h3>Contact Revealed ✅</h3>
@@ -305,7 +297,7 @@
         <div class="reveal-card">
             <div class="r-label">Traveler</div>
             <div class="r-val" style="font-size:16px; margin-bottom:14px;">Traveler</div>
-            <div class="r-label">Phone Number</div>
+            <div class="r-label">Contact Info</div>
             <div class="r-val">+66 123 456 789</div>
         </div>
         <button class="btn btn-primary" onclick="if(tg&&tg.openTelegramLink)tg.openTelegramLink('https://t.me/username'); else showToast('Opening Telegram…')">Chat on Telegram →</button>
@@ -313,7 +305,6 @@
     </div>
 </div>
 
-<!-- MODAL: Edit -->
 <div id="modal-edit" class="modal-wrap">
     <div class="modal-box">
         <h3>Update Listing</h3>
@@ -341,8 +332,6 @@
 
 <script>
     // ── Firebase ──
-    // NOTE: Telegram Bot API is now routed through a Google Apps Script proxy (BACKEND_URL below)
-    // to avoid CORS issues. The BOT_TOKEN and CHAT_ID live in the Apps Script, not here.
     var firebaseConfig = {
         apiKey: "AIzaSyCEL8IUHcIXhqiD-mOV2WCoPODJm7NXs5Y",
         authDomain: "mykilosell-2d08d.firebaseapp.com",
@@ -356,8 +345,6 @@
     var db = firebase.database();
 
     // ── Google Apps Script proxy URL ──
-    // This sends the Telegram message server-side, avoiding CORS.
-    // Replace with your own deployed Apps Script URL.
     var BACKEND_URL = "https://script.google.com/macros/s/AKfycbxxdSvZcxIgEa37m8gjHFyCMGZHfQLeTu6y7mBn0rchb3Gu44jGhzXCFZYWJlmzVbHeag/exec";
 
     // ── Telegram ──
@@ -365,8 +352,6 @@
     if (tg && typeof tg.expand === 'function') tg.expand();
 
     // ── User identity ──
-    // Primary: Telegram numeric user ID (guaranteed unique).
-    // Fallback: stable random guest ID persisted in localStorage.
     var myUserId, myUserName;
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
         myUserId   = String(tg.initDataUnsafe.user.id);
@@ -422,9 +407,6 @@
         toastTimer = setTimeout(function(){ t.classList.remove('show'); }, duration || 3000);
     }
 
-    // Fix 4: replaces both alert() and confirm() with Telegram-safe dialogs.
-    // For alerts: tg.showAlert if available, else toast.
-    // For confirms: tg.showPopup if available, else a small inline modal.
     function safeAlert(msg) {
         if (tg && tg.showAlert) {
             tg.showAlert(msg);
@@ -433,8 +415,6 @@
         }
     }
 
-    // Fix 3 (alert path): also removes the last remaining alert() call in the error handler.
-    // Fix 3 (confirm path): tg.showPopup on Telegram, inline modal fallback elsewhere.
     var confirmCallback = null;
     function safeConfirm(title, msg, onYes) {
         if (tg && tg.showPopup) {
@@ -449,7 +429,6 @@
                 if (btnId === 'yes') onYes();
             });
         } else {
-            // Fallback inline modal for browser / dev testing
             confirmCallback = onYes;
             document.getElementById('confirm-title').textContent = title;
             document.getElementById('confirm-msg').textContent   = msg;
@@ -522,7 +501,6 @@
         }
     }
 
-    // Fix 1: openEditModal is restored — was missing in previous version
     function openEditModal(postId) {
         var post = allPosts.find(function(p){ return p.id === postId; });
         if (!post) return;
@@ -548,7 +526,6 @@
         document.getElementById('modal-edit').classList.remove('open');
     }
 
-    // Fix 3: uses safeConfirm — works on Telegram AND in browser
     function markSoldOut(postKey) {
         safeConfirm(
             'Mark as Sold Out?',
@@ -565,7 +542,6 @@
     function renderMyPosts() {
         var container = document.getElementById('myposts-container');
         if (!container) return;
-        // Filter by userId first (unique), fall back to name for legacy posts
         var mine = allPosts.filter(function(p){
             return p.userId ? p.userId === myUserId : p.user === myUserName;
         });
@@ -606,10 +582,11 @@
         });
     }
 
-    // ── Validation ──
+    // ── Validation (Contact ထည့်သွင်းထားပြီးဖြစ်သည်) ──
     function validateSell() {
         var ok = true;
-        ['s-from','s-to','s-date','s-kilo','s-price'].forEach(function(id){
+        // 💡 ဤနေရာတွင် 's-contact' ကိုပါ မဖြစ်မနေ ထည့်ရမည်ဟု စစ်ဆေးရန် ပြင်ဆင်ထားပါသည်
+        ['s-from','s-to','s-date','s-kilo','s-price','s-contact'].forEach(function(id){
             var el=document.getElementById(id);
             if(!el.value.trim()){el.classList.add('error');ok=false;}else el.classList.remove('error');
         });
@@ -618,7 +595,8 @@
     }
     function validateBuy() {
         var ok = true;
-        ['b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id){
+        // 💡 ဤနေရာတွင် 'b-contact' ကိုပါ မဖြစ်မနေ ထည့်ရမည်ဟု စစ်ဆေးရန် ပြင်ဆင်ထားပါသည်
+        ['b-from','b-to','b-date','b-item','b-kilo','b-price','b-contact'].forEach(function(id){
             var el=document.getElementById(id);
             if(!el.value.trim()){el.classList.add('error');ok=false;}else el.classList.remove('error');
         });
@@ -627,10 +605,6 @@
     }
 
     // ── Submit post ──
-    // Fix 2: Firebase is now saved BEFORE the no-cors fetch so data is never lost
-    // even if the Apps Script proxy is unreachable.
-    // Fix 3: alert() replaced with safeAlert().
-    // Fix 4: BOT_TOKEN / CHAT_ID removal documented — routing is now via BACKEND_URL proxy.
     window.sendPost = function(type, btnElement) {
         if (type === 'Travel Offer' && !validateSell()) return;
         if (type === 'Cargo Request' && !validateBuy()) return;
@@ -639,7 +613,6 @@
         btnElement.disabled = true;
         btnElement.innerText = '⏳ Posting...';
 
-        // Sanitise username for Telegram Markdown
         var safeName = myUserName.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '');
 
         var postData = { type: type, user: myUserName, userId: myUserId, timestamp: Date.now() };
@@ -653,6 +626,9 @@
             postData.price    = document.getElementById('s-price').value;
             postData.currency = document.getElementById('s-currency').value;
             postData.note     = document.getElementById('s-note').value.trim();
+            // 💡 Database သို့သိမ်းရန် Contact အချက်အလက်ကို ယူပါသည်
+            postData.contact  = document.getElementById('s-contact').value.trim();
+            
             msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
                    '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo + ' Kg' +
                    '\n💰 Price: ' + postData.price + ' ' + postData.currency +
@@ -665,6 +641,9 @@
             postData.price    = document.getElementById('b-price').value;
             postData.currency = document.getElementById('b-currency').value;
             postData.item     = document.getElementById('b-item').value.trim();
+            // 💡 Database သို့သိမ်းရန် Contact အချက်အလက်ကို ယူပါသည်
+            postData.contact  = document.getElementById('b-contact').value.trim();
+            
             msg += '🛫 From: ' + postData.from + '\n🛬 To: ' + postData.to +
                    '\n📅 Date: ' + postData.date + '\n⚖️ Kilo: ' + postData.kilo + ' Kg' +
                    '\n🛍️ Item: ' + postData.item +
@@ -674,11 +653,8 @@
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-        // Fix 2: Save to Firebase FIRST — data is safe regardless of what the proxy does
         db.ref('posts').push(postData)
           .then(function() {
-              // Notify via Apps Script proxy (no-cors — fire and forget)
-              // We don't await a meaningful response since no-cors is always opaque.
               var controller = new AbortController();
               var tid = setTimeout(function(){ controller.abort(); }, 8000);
               fetch(BACKEND_URL + '?text=' + encodeURIComponent(msg), {
@@ -688,15 +664,15 @@
               if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
               showToast('✅ Posted successfully!');
 
-              ['s-from','s-to','s-date','s-kilo','s-price','s-note',
-               'b-from','b-to','b-date','b-item','b-kilo','b-price'].forEach(function(id){
+              // 💡 အောင်မြင်သွားလျှင် Contact ရိုက်ထားသည့် အကွက်ကိုပါ အလွတ်ပြန်ထားပေးမည်
+              ['s-from','s-to','s-date','s-kilo','s-price','s-note','s-contact',
+               'b-from','b-to','b-date','b-item','b-kilo','b-price','b-contact'].forEach(function(id){
                   var el=document.getElementById(id); if(el) el.value='';
               });
               nav('screen-market');
           })
           .catch(function(err) {
               console.error('Firebase error:', err);
-              // Fix 3: safeAlert instead of alert()
               safeAlert('❌ Post failed: ' + err.message + '\nCheck your internet connection.');
           })
           .finally(function() {
@@ -764,7 +740,6 @@
     });
 </script>
 
-<!-- Inline confirm fallback (shown only outside Telegram where tg.showPopup is unavailable) -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:16px;">
     <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:100%;max-width:320px;padding:24px;animation:slideUp 0.2s ease;">
         <h4 id="confirm-title" style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:8px;"></h4>
@@ -782,7 +757,6 @@
     </div>
 </div>
 <script>
-    // Wire up safeConfirm's fallback overlay open
     var _origSafeConfirm = safeConfirm;
     safeConfirm = function(title, msg, onYes) {
         if (tg && tg.showPopup) {
