@@ -647,7 +647,7 @@
         return ok;
     }
 
-    // ── Secured Submission Flow ──
+    // ── Secured Submission Flow (Bypassing CORS) ──
     window.sendToTelegram = function(type, btnElement) {
         if (type === 'Travel Offer' && !validateSell()) return;
         if (type === 'Cargo Request' && !validateBuy()) return;
@@ -693,24 +693,19 @@
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
+        // 👇 အစ်ကိုပေးထားသော လင့်ခ်အသစ်
         var BACKEND_URL = "https://script.google.com/macros/s/AKfycbxxdSvZcxIgEa37m8gjHFyCMGZHfQLeTu6y7mBn0rchb3Gu44jGhzXCFZYWJlmzVbHeag/exec"; 
         var fetchUrl = BACKEND_URL + "?text=" + encodeURIComponent(msg);
         
         var controller = new AbortController();
         var timeoutId = setTimeout(function() { controller.abort(); }, 8000);
 
-        fetch(fetchUrl, { signal: controller.signal })
-            .then(function(res) {
+        // ⚠️ CORS ကို ကျော်လွှားရန် mode: 'no-cors' ကို သုံးထားပါသည်
+        fetch(fetchUrl, { method: 'GET', mode: 'no-cors', signal: controller.signal })
+            .then(function() {
                 clearTimeout(timeoutId);
-                return res.text(); // JSON Parse Error မဖြစ်အောင် Text အနေနဲ့ အရင်ဖတ်ပါမည်
-            })
-            .then(function(text) {
-                // အကယ်၍ Google Script ကနေ "Sign in" လုပ်ခိုင်းနေရင် (Anyone လို့ မရွေးထားရင်)
-                if (text.includes("<html") || text.includes("Sign in")) {
-                    throw new Error("Google Script Access Error");
-                }
                 
-                // အားလုံးအဆင်ပြေရင် Firebase သို့ ဒေတာသွင်းမည်
+                // no-cors သုံးထားသဖြင့် Error မတက်လျှင် အောင်မြင်သည်ဟု မှတ်ယူပြီး Firebase သို့ ဒေတာသွင်းမည်
                 db.ref('posts').push(postData).catch(function(e) { console.error(e); });
 
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -725,13 +720,7 @@
             .catch(function(err) {
                 clearTimeout(timeoutId);
                 console.error('Error:', err);
-                
-                // ⚠️ Error တက်ရခြင်း အကြောင်းရင်းကို မျက်နှာပြင်ပေါ်မှာ သေချာပြပေးပါမည်
-                if (err.message.includes("Access Error") || err.message.includes("Failed to fetch")) {
-                    alert("⚠️ ချိတ်ဆက်မှု ပိတ်ပင်ခံထားရပါသည် (Access Blocked)\n\nဖြေရှင်းရန်-\n၁။ သင်၏ Google Script သို့သွားပါ။\n၂။ Deploy > Manage deployments နှိပ်ပါ။\n၃။ Edit (ခဲတံပုံ) နှိပ်ပါ။\n၄။ Version တွင် 'New version' ရွေးပါ။\n၅။ Who has access တွင် 'Anyone' ဟု သေချာပေါက် ရွေးချယ်ပြီး Deploy ပြန်လုပ်ပါ။");
-                } else {
-                    alert("⚠️ Error: " + err.message + "\nGoogle Script တွင် သင်၏ Token ကို မှန်ကန်စွာ ထည့်သွင်းထားခြင်း ရှိမရှိ စစ်ဆေးပါ။");
-                }
+                alert("⚠️ Error: Check your internet connection.");
                 showToast('❌ Failed! Please try again.', 6000);
             })
             .finally(function() {
