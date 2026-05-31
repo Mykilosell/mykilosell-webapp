@@ -348,8 +348,6 @@
     var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     if (tg && typeof tg.expand === 'function') tg.expand();
 
-    // ⚠️ Telegram Token တွေကို လုံခြုံရေးအရ HTML ဖိုင်ထဲကနေ လုံးဝ ဖယ်ရှားလိုက်ပါပြီ
-
     // ── User ID Setup ──
     var myUserId = 'guest_' + Date.now();
     var myUserName = 'Guest User';
@@ -649,7 +647,7 @@
         return ok;
     }
 
-    // ── Secured Submission Flow (Using Backend Middleman) ──
+    // ── Secured Submission Flow ──
     window.sendToTelegram = function(type, btnElement) {
         if (type === 'Travel Offer' && !validateSell()) return;
         if (type === 'Cargo Request' && !validateBuy()) return;
@@ -695,21 +693,24 @@
 
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-        // 👇 အစ်ကို့ရဲ့ Link ကို အသေထည့်ပေးထားပါသည်
         var BACKEND_URL = "https://script.google.com/macros/s/AKfycbzQWpeHeTqRjdZj-gxc9rcpo8kX4pVAYeiFVd-wwelgTstfX4dCI-hfD9CgwgVFM06r/exec"; 
-
         var fetchUrl = BACKEND_URL + "?text=" + encodeURIComponent(msg);
+        
         var controller = new AbortController();
         var timeoutId = setTimeout(function() { controller.abort(); }, 8000);
 
         fetch(fetchUrl, { signal: controller.signal })
             .then(function(res) {
                 clearTimeout(timeoutId);
-                if (!res.ok) throw new Error('Network Error');
-                return res.json();
+                return res.text(); // JSON Parse Error မဖြစ်အောင် Text အနေနဲ့ အရင်ဖတ်ပါမည်
             })
-            .then(function() {
-                // အောင်မြင်လျှင် Firebase သို့ ဒေတာသွင်းမည်
+            .then(function(text) {
+                // အကယ်၍ Google Script ကနေ "Sign in" လုပ်ခိုင်းနေရင် (Anyone လို့ မရွေးထားရင်)
+                if (text.includes("<html") || text.includes("Sign in")) {
+                    throw new Error("Google Script Access Error");
+                }
+                
+                // အားလုံးအဆင်ပြေရင် Firebase သို့ ဒေတာသွင်းမည်
                 db.ref('posts').push(postData).catch(function(e) { console.error(e); });
 
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -724,6 +725,13 @@
             .catch(function(err) {
                 clearTimeout(timeoutId);
                 console.error('Error:', err);
+                
+                // ⚠️ Error တက်ရခြင်း အကြောင်းရင်းကို မျက်နှာပြင်ပေါ်မှာ သေချာပြပေးပါမည်
+                if (err.message.includes("Access Error") || err.message.includes("Failed to fetch")) {
+                    alert("⚠️ ချိတ်ဆက်မှု ပိတ်ပင်ခံထားရပါသည် (Access Blocked)\n\nဖြေရှင်းရန်-\n၁။ သင်၏ Google Script သို့သွားပါ။\n၂။ Deploy > Manage deployments နှိပ်ပါ။\n၃။ Edit (ခဲတံပုံ) နှိပ်ပါ။\n၄။ Version တွင် 'New version' ရွေးပါ။\n၅။ Who has access တွင် 'Anyone' ဟု သေချာပေါက် ရွေးချယ်ပြီး Deploy ပြန်လုပ်ပါ။");
+                } else {
+                    alert("⚠️ Error: " + err.message + "\nGoogle Script တွင် သင်၏ Token ကို မှန်ကန်စွာ ထည့်သွင်းထားခြင်း ရှိမရှိ စစ်ဆေးပါ။");
+                }
                 showToast('❌ Failed! Please try again.', 6000);
             })
             .finally(function() {
